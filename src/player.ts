@@ -57,7 +57,7 @@ export class Player {
 		this.container.rotation = value;
 	}
 
-	private spriteScale = 0.5;
+	private spriteScale = 1;
 
 	constructor() {
 		if (!Player.keyManager) throw "Need to define keyManager before creating new player";
