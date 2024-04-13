@@ -1,8 +1,5 @@
-import { App } from './app/app'
-import './styles.css'
+import { Game } from './game';
 
-function initializeApp() {
-    let app = new App();
-    app.init();
-}
-initializeApp();
+(async () => {
+    const app = new Game();
+})(); 

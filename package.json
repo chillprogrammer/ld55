@@ -1,40 +1,26 @@
 {
-  "name": "ld55",
+  "name": "legendary-game",
   "version": "1.0.0",
-  "description": "",
+  "description": "a game",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "build": "webpack --config webpack.prod.config.js --mode=production",
-    "serve": "webpack serve --config webpack.dev.config.js --mode=development",
-    "test": "echo No unit tests have been implemented"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "webpack-dev-server --mode development",
+    "build": "webpack --mode production"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chillprogrammer/ld55.git"
-  },
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/chillprogrammer/ld55/issues"
-  },
-  "homepage": "https://github.com/chillprogrammer/ld55#readme",
+  "author": "Joel Schechter",
   "dependencies": {
-    "@pixi/events": "^7.3.1",
-    "@pixi/filter-godray": "^5.1.1",
-    "@pixi/filter-outline": "^5.2.0",
-    "@types/howler": "^2.2.9",
-    "copy-webpack-plugin": "^11.0.0",
-    "css-loader": "^6.8.1",
-    "html-webpack-plugin": "^5.5.3",
-    "javascript-obfuscator": "^4.1.0",
-    "pixi.js": "^7.3.1",
+    "pixi.js": "^8.0.2",
     "rxjs": "^7.8.1",
-    "style-loader": "^3.3.3",
-    "ts-loader": "^9.4.4",
-    "typescript": "^5.2.2",
-    "webpack": "^5.88.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^12.0.2",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.90.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1",
-    "webpack-obfuscator": "^3.5.1"
+    "webpack-dev-server": "^4.15.1"
   }
 }
