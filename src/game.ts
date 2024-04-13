@@ -1,6 +1,7 @@
 import { Application, ApplicationOptions, Assets, Container, TextureStyle } from "pixi.js";
 import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
+import { KeyManager } from './managers/key-manager';
 import { Player } from './player';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -13,8 +14,16 @@ export class Game {
     private app: Application;
     private mainContainer: Container = null;
 
+	// Assets
+	
+	private spritesheetAssets: any;
+	private tilesetAssets: any;
+	private tilemapAssets: any;
+	
+
     // Managers
     private mapManager: MapManager = null;
+	private keyManager: KeyManager = new KeyManager();
 
     constructor() {
         this.init();
@@ -34,6 +43,8 @@ export class Game {
         await this.mapManager.init();
         this.mapManager.loadMap(1);
 
+		this.linkGlobalsToClasses();
+
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.
         // By default this is true only for the Ticker.shared instance.
@@ -41,6 +52,8 @@ export class Game {
 
         ticker.add(this.update.bind(this));
         ticker.start();
+
+		new Player();
     }
 
     private update(ticker: Ticker) {
@@ -105,18 +118,22 @@ export class Game {
         await Assets.init({ manifest });
 
         // Load the Spritesheet assets
-        const spritesheetAssets = await Assets.loadBundle('spritesheets');
-        // Load the TileSet assets
-        const tileSetAssets = await Assets.loadBundle('tilesets');
-
+        this.spritesheetAssets = await Assets.loadBundle('spritesheets');
+        // Load the Tileset assets
+        this.tilesetAssets = await Assets.loadBundle('tilesets');
         // Load the Tilemap assets
-        const tileMapAssets = await Assets.loadBundle('tilemaps');
+        this.tilemapAssets = await Assets.loadBundle('tilemaps');
 
-		Player.setSpritesheetAssets(spritesheetAssets);
-		Player.setMainContainer(this.mainContainer);
-
-		new Player();
     }
+
+
+	private linkGlobalsToClasses() {
+		// Linking Globals to Player
+		Player.mainContainer = this.mainContainer;
+		Player.keyManager = this.keyManager;
+		Player.spritesheetAssets = this.spritesheetAssets;
+	}
+
 
     /**
     * Creates the Pixi.js canvas, and adds it to the HTML document.
