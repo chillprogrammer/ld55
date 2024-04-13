@@ -1,8 +1,9 @@
 {
-  "name": "ld54",
+  "name": "ld55",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "webpack --config webpack.prod.config.js --mode=production",
     "serve": "webpack serve --config webpack.dev.config.js --mode=development",
@@ -10,13 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chillprogrammer/ld54.git"
+    "url": "git+https://github.com/chillprogrammer/ld55.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/chillprogrammer/ld54/issues"
+    "url": "https://github.com/chillprogrammer/ld55/issues"
   },
-  "homepage": "https://github.com/chillprogrammer/ld54#readme",
+  "homepage": "https://github.com/chillprogrammer/ld55#readme",
   "dependencies": {
     "@pixi/events": "^7.3.1",
     "@pixi/filter-godray": "^5.1.1",
