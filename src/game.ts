@@ -3,6 +3,7 @@ import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
 import { KeyManager } from './managers/key-manager';
 import titlescreen from './titlescreen';
+import createMap from './map';
 import { Player } from './player';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -51,6 +52,9 @@ export class Game {
 
 		await titlescreen(this);
 
+		createMap(this);
+
+
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.
         // By default this is true only for the Ticker.shared instance.
@@ -97,7 +101,16 @@ export class Game {
 						{
 							alias: 'player.png',
 							src: 'assets/sprites/player.png'
-						}
+						},
+						{
+							alias: 'floor.png',
+							src: 'assets/sprites/floor.png'
+						},
+						{
+							alias: 'counter.png',
+							src: 'assets/sprites/counter.png'
+						},
+
                     ]
                 },
                 {
