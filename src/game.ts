@@ -40,7 +40,7 @@ export class Game {
         this.mainContainer = new Container();
 
 		// Changing the position of the main container to center all positions around centerpoint of canvas
-		this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
+//		this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
         this.app.stage.addChild(this.mainContainer);
         await this.loadAssets();
         this.mapManager = new MapManager(this.mainContainer);

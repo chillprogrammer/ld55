@@ -5,6 +5,8 @@ import {Game} from './game';
 /** The main player class for the game */
 export class Player {
 
+	public static instance: Player | undefined;
+
 	private SPEED = 0.1;
 
 	// ---------------------------- GLOBALS ------------------------------
@@ -30,10 +32,10 @@ export class Player {
 
 	// -------------------------------------------------------------------
 
-	private container: Container = new Container();
+	public container: Container = new Container();
 	private sprite: Sprite;
 
-	private get x() {
+	public get x() {
 		return this.container.x;
 	}
 
@@ -41,7 +43,7 @@ export class Player {
 		this.container.x = value;
 	}
 
-	private get y() {
+	public get y() {
 		return this.container.y;
 	}
 
@@ -64,10 +66,14 @@ export class Player {
 		if (!Player.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
 		if (!Player.mainContainer) throw "Need to define mainContainer before creating new player";
 
+		Player.instance = this;
+
 		this.sprite = Sprite.from(Player.spritesheetAssets['player.png']);
 		this.sprite.scale.set(this.spriteScale, this.spriteScale);
 		this.sprite.anchor.set(0.5, 0.5);
 		this.container.addChild(this.sprite);
+
+		this.container.position.set(Player.game.INITIAL_WIDTH / 2, Player.game.INITIAL_HEIGHT / 2);
 
 		Player.mainContainer.addChild(this.container);
 
