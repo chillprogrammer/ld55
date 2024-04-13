@@ -1,5 +1,6 @@
 import { Application, ApplicationOptions, Assets, Container } from "pixi.js";
 import { MapManager } from "./managers/map-manager";
+import { Ticker } from 'pixi.js';
 
 export class Game {
 
@@ -29,7 +30,21 @@ export class Game {
         this.mapManager = new MapManager(this.mainContainer);
         await this.mapManager.init();
         this.mapManager.loadMap(1);
+
+        const ticker = Ticker.shared;
+        // Set this to prevent starting this ticker when listeners are added.
+        // By default this is true only for the Ticker.shared instance.
+        ticker.autoStart = false;
+
+        ticker.add(this.update.bind(this));
+        ticker.start();
     }
+
+    private update(ticker: Ticker) {
+        const deltaTime = ticker.deltaTime;
+        console.log(deltaTime)
+    }
+
 
     /**
      * Loads the assets for PixiJS to use.
