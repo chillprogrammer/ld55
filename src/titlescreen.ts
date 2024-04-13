@@ -19,7 +19,7 @@ export default function titlescreen(game: Game): Promise<void> { return new Prom
 		const wizardY = INITIAL_HEIGHT / 2;
 
 		const wizard = new MeshPlane({
-			texture: spritesheetAssets['player.png'], verticesX: xVerts, verticesY: yVerts
+			texture: spritesheetAssets['wizard.png'], verticesX: xVerts, verticesY: yVerts
 		});
 
 		wizard.scale.set(6, 6);

@@ -5,6 +5,7 @@ import { KeyManager } from './managers/key-manager';
 import titlescreen from './titlescreen';
 import createMap from './map';
 import { Player } from './player';
+import { WizardSpawner } from "./wizard";
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -16,16 +17,18 @@ export class Game {
     public app: Application;
     public mainContainer: Container = null;
 
-	// Assets
-	public spritesheetAssets: any;
-	public tilesetAssets: any;
-	public tilemapAssets: any;
-	public fontAssets: any;
-	
+    // Assets
+    public spritesheetAssets: any;
+    public tilesetAssets: any;
+    public tilemapAssets: any;
+    public fontAssets: any;
+
 
     // Managers
     public mapManager: MapManager = null;
-	public keyManager: KeyManager = null;
+    public keyManager: KeyManager = null;
+    private player: Player = null;
+    public wizardSpawner: WizardSpawner = null;
 
     constructor() {
         this.init();
@@ -39,20 +42,20 @@ export class Game {
 
         this.mainContainer = new Container();
 
-		// Changing the position of the main container to center all positions around centerpoint of canvas
-//		this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
+        // Changing the position of the main container to center all positions around centerpoint of canvas
+        // this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
         this.app.stage.addChild(this.mainContainer);
         await this.loadAssets();
         this.mapManager = new MapManager(this.mainContainer);
-		this.keyManager = new KeyManager();
+        this.keyManager = new KeyManager();
         await this.mapManager.init();
         this.mapManager.loadMap(1);
 
-		this.linkGlobalsToClasses();
+        this.linkGlobalsToClasses();
 
-		await titlescreen(this);
+        await titlescreen(this);
 
-		createMap(this);
+        createMap(this);
 
 
         const ticker = Ticker.shared;
@@ -63,7 +66,11 @@ export class Game {
         ticker.add(this.update.bind(this));
         ticker.start();
 
-		new Player();
+        this.player = new Player();
+        this.player.container.zIndex = 1;
+        this.wizardSpawner = new WizardSpawner();
+        this.wizardSpawner.setPlayer(this.player);
+        this.wizardSpawner.createWizard();
     }
 
     private update(ticker: Ticker) {
@@ -98,18 +105,22 @@ export class Game {
                             alias: 'tileset1.png',
                             src: 'assets/tilemaps/tileset1.png',
                         },
-						{
-							alias: 'player.png',
-							src: 'assets/sprites/player.png'
-						},
-						{
-							alias: 'floor.png',
-							src: 'assets/sprites/floor.png'
-						},
-						{
-							alias: 'counter.png',
-							src: 'assets/sprites/counter.png'
-						},
+                        {
+                            alias: 'player.png',
+                            src: 'assets/sprites/player.png'
+                        },
+                        {
+                            alias: 'wizard.png',
+                            src: 'assets/sprites/wizard.png'
+                        },
+                        {
+                            alias: 'floor.png',
+                            src: 'assets/sprites/floor.png'
+                        },
+                        {
+                            alias: 'counter.png',
+                            src: 'assets/sprites/counter.png'
+                        },
 
                     ]
                 },
@@ -127,19 +138,19 @@ export class Game {
                     assets: [
                         {
                             alias: 'map1',
-                            src: 'assets/tilemaps/map1.json', 
-						} 
-					]
+                            src: 'assets/tilemaps/map1.json',
+                        }
+                    ]
                 },
-				{
-					name: 'fonts',
-					assets: [
-						{
-							alias: 'wendysScript.ttf',
-							src: 'assets/fonts/wendysScript.ttf'
-						}
-					]
-				}
+                {
+                    name: 'fonts',
+                    assets: [
+                        {
+                            alias: 'wendysScript.ttf',
+                            src: 'assets/fonts/wendysScript.ttf'
+                        }
+                    ]
+                }
             ]
         };
 
@@ -154,15 +165,16 @@ export class Game {
         this.fontAssets = await Assets.loadBundle('fonts');
     }
 
-	/**
-	* Function which links the individual game object to the different classes. 
-	* That way, game does not have to be passed each time a new instance is created for
-	* the classes. Make sure to implement this when creating a new game class
-	*/
-	private linkGlobalsToClasses() {
-		// Linking Globals to Player
-		Player.setGame(this);
-	}
+    /**
+    * Function which links the individual game object to the different classes. 
+    * That way, game does not have to be passed each time a new instance is created for
+    * the classes. Make sure to implement this when creating a new game class
+    */
+    private linkGlobalsToClasses() {
+        // Linking Globals to Player
+        Player.setGame(this);
+        WizardSpawner.setGame(this);
+    }
 
 
     /**
@@ -188,7 +200,7 @@ export class Game {
         //Add the pixi.js canvas to the HTML document
         document.body.appendChild(<any>this.app.canvas);
 
-		this.app.canvas.style.imageRendering = 'pixelated'
+        this.app.canvas.style.imageRendering = 'pixelated'
 
         window.onresize = this.onResizeCallback.bind(this);
 
@@ -221,7 +233,7 @@ export class Game {
 
             //This sets the game's dimensions to what we calculated.
             this.app.renderer.resize(calculatedWidth, calculatedHeight);
-			console.log(this.app.renderer);
+            console.log(this.app.renderer);
             const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
             this.app.stage.scale.set(ratio);
         }

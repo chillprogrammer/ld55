@@ -33,7 +33,7 @@ export class Player {
 	// -------------------------------------------------------------------
 
 	public container: Container = new Container();
-	private sprite: Sprite;
+	public sprite: Sprite;
 
 	public get x() {
 		return this.container.x;
