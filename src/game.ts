@@ -130,7 +130,11 @@ export class Game {
 
     }
 
-
+	/**
+	* Function which links the individual game object to the different classes. 
+	* That way, game does not have to be passed each time a new instance is created for
+	* the classes. Make sure to implement this when creating a new game class
+	*/
 	private linkGlobalsToClasses() {
 		// Linking Globals to Player
 		Player.setGame(this);
