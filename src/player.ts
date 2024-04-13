@@ -8,22 +8,24 @@ export class Player {
 	private SPEED = 0.1;
 
 	// ---------------------------- GLOBALS ------------------------------
+	
+	private static game: Game | undefined;	
+	public static setGame(game: Game) {
+		Player.game = game;
+	}
 
-	private static _keyManager: KeyManager | undefined;
-	public static set keyManager(keyManager: KeyManager) {
-		Player._keyManager = keyManager;
+	public static get keyManager() {
+		return Player.game.keyManager;
 	}
 
 
-	private static _spritesheetAssets: any | undefined;
-	public static set spritesheetAssets(spritesheetAssets: any) {
-		Player._spritesheetAssets = spritesheetAssets;
+	public static get spritesheetAssets() {
+		return Player.game.spritesheetAssets;
 	}
 
 
-	private static _mainContainer: Container | undefined;
-	public static set mainContainer(app: Container) {
-		Player._mainContainer = app;
+	public static get mainContainer() {
+		return Player.game.mainContainer;
 	}	
 
 	// -------------------------------------------------------------------
@@ -58,16 +60,16 @@ export class Player {
 	private spriteScale = 0.5;
 
 	constructor() {
-		if (!Player._keyManager) throw "Need to define keyManager before creating new player";
-		if (!Player._spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
-		if (!Player._mainContainer) throw "Need to define mainContainer before creating new player";
+		if (!Player.keyManager) throw "Need to define keyManager before creating new player";
+		if (!Player.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
+		if (!Player.mainContainer) throw "Need to define mainContainer before creating new player";
 
-		this.sprite = Sprite.from(Player._spritesheetAssets['player.png']);
+		this.sprite = Sprite.from(Player.spritesheetAssets['player.png']);
 		this.sprite.scale.set(this.spriteScale, this.spriteScale);
 		this.sprite.anchor.set(0.5, 0.5);
 		this.container.addChild(this.sprite);
 
-		Player._mainContainer.addChild(this.container);
+		Player.mainContainer.addChild(this.container);
 
 		Ticker.shared.add(this.update.bind(this));
 
@@ -89,10 +91,10 @@ export class Player {
 
 		// ------------- movement ------------------
 		
-		const w = Player._keyManager.isKeyPressed('w');		
-		const a = Player._keyManager.isKeyPressed('a');		
-		const s = Player._keyManager.isKeyPressed('s');		
-		const d = Player._keyManager.isKeyPressed('d');		
+		const w = Player.keyManager.isKeyPressed('w');		
+		const a = Player.keyManager.isKeyPressed('a');		
+		const s = Player.keyManager.isKeyPressed('s');		
+		const d = Player.keyManager.isKeyPressed('d');		
 	
 		// The "+" syntax converts a boolean to number
 		const dx = (+d - +a);

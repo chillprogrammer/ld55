@@ -11,18 +11,18 @@ export class Game {
     public INITIAL_WIDTH = 480;
     public INITIAL_HEIGHT = 270;
     private backgroundColor: number = 0x000000;
-    private app: Application;
-    private mainContainer: Container = null;
+    public app: Application;
+    public mainContainer: Container = null;
 
 	// Assets
-	private spritesheetAssets: any;
-	private tilesetAssets: any;
-	private tilemapAssets: any;
+	public spritesheetAssets: any;
+	public tilesetAssets: any;
+	public tilemapAssets: any;
 	
 
     // Managers
-    private mapManager: MapManager = null;
-	private keyManager: KeyManager = null;
+    public mapManager: MapManager = null;
+	public keyManager: KeyManager = null;
 
     constructor() {
         this.init();
@@ -133,9 +133,7 @@ export class Game {
 
 	private linkGlobalsToClasses() {
 		// Linking Globals to Player
-		Player.mainContainer = this.mainContainer;
-		Player.keyManager = this.keyManager;
-		Player.spritesheetAssets = this.spritesheetAssets;
+		Player.setGame(this);
 	}
 
 
