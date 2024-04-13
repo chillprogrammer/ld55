@@ -1,6 +1,9 @@
-import { Application, ApplicationOptions, Assets, Container } from "pixi.js";
+import { Application, ApplicationOptions, Assets, Container, TextureStyle } from "pixi.js";
 import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
+import { Player } from './player';
+
+TextureStyle.defaultOptions.scaleMode = 'nearest';
 
 export class Game {
 
@@ -42,7 +45,7 @@ export class Game {
 
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaTime;
-        console.log(deltaTime)
+        //console.log(deltaTime)
     }
 
 
@@ -71,7 +74,11 @@ export class Game {
                         {
                             alias: 'tileset1.png',
                             src: 'assets/tilemaps/tileset1.png',
-                        }
+                        },
+						{
+							alias: 'player.png',
+							src: 'assets/sprites/player.png'
+						}
                     ]
                 },
                 {
@@ -88,9 +95,9 @@ export class Game {
                     assets: [
                         {
                             alias: 'map1',
-                            src: 'assets/tilemaps/map1.json',
-                        }
-                    ]
+                            src: 'assets/tilemaps/map1.json', 
+						} 
+					]
                 }
             ]
         };
@@ -99,12 +106,16 @@ export class Game {
 
         // Load the Spritesheet assets
         const spritesheetAssets = await Assets.loadBundle('spritesheets');
-
         // Load the TileSet assets
         const tileSetAssets = await Assets.loadBundle('tilesets');
 
         // Load the Tilemap assets
         const tileMapAssets = await Assets.loadBundle('tilemaps');
+
+		Player.setSpritesheetAssets(spritesheetAssets);
+		Player.setMainContainer(this.mainContainer);
+
+		new Player();
     }
 
     /**
