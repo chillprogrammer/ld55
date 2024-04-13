@@ -24,7 +24,6 @@ export class WizardSpawner {
         //console.log(this.player.sprite.zIndex)
         for (const wizard of this.wizardList) {
             const wizardYPos = wizard.sprite.position.y;
-            console.log(`WizardY: ${wizardYPos}\t, PlayerY: ${playerYPos}`)
 
             wizard.sprite.zIndex = (playerYPos < wizardYPos)
                 ? this.player.container.zIndex + 1
