@@ -80,13 +80,14 @@ export class Player {
 		const d = Player._keyManager.isKeyPressed('d');		
 	
 		// The "+" syntax converts a bool to number
-		const dx = (+d - +a) * this.SPEED * deltaTime;
-		const dy = (+s - +w) * this.SPEED * deltaTime;
+		const dx = (+d - +a);
+		const dy = (+s - +w);
+		let dDist = Math.sqrt(dx ** 2 + dy ** 2);
+		if (dDist == 0) dDist = 1;
 
-		this.x += dx;
-		this.y += dy;
+		this.x += dx * this.SPEED * deltaTime / dDist;
+		this.y += dy * this.SPEED * deltaTime / dDist;
 
-		this.rotation += deltaTime / 10;
 	}
 }
 
