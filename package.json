@@ -1,0 +1,39 @@
+{
+  "name": "ld54",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.config.js --mode=production",
+    "serve": "webpack serve --config webpack.dev.config.js --mode=development",
+    "test": "echo No unit tests have been implemented"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chillprogrammer/ld54.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/chillprogrammer/ld54/issues"
+  },
+  "homepage": "https://github.com/chillprogrammer/ld54#readme",
+  "dependencies": {
+    "@pixi/events": "^7.3.1",
+    "@pixi/filter-godray": "^5.1.1",
+    "@pixi/filter-outline": "^5.2.0",
+    "@types/howler": "^2.2.9",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.3",
+    "javascript-obfuscator": "^4.1.0",
+    "pixi.js": "^7.3.1",
+    "rxjs": "^7.8.1",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.2.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "webpack-obfuscator": "^3.5.1"
+  }
+}
