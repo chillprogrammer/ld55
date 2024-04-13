@@ -107,7 +107,7 @@ export class Player {
 
 		// ------------- player tilt ------------------
 		
-		const isMoving = (w || a || s || d);
+		const isMoving = (dx !== 0 || dy !== 0);
 		
 		if (isMoving)
 			this.walkTiltTimer -= deltaMS;
