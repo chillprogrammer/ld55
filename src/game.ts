@@ -8,14 +8,13 @@ TextureStyle.defaultOptions.scaleMode = 'nearest';
 
 export class Game {
 
-    public INITIAL_WIDTH = 480;
-    public INITIAL_HEIGHT = 270;
+    public static INITIAL_WIDTH = 480;
+    public static INITIAL_HEIGHT = 270;
     private backgroundColor: number = 0x000000;
     private app: Application;
     private mainContainer: Container = null;
 
 	// Assets
-	
 	private spritesheetAssets: any;
 	private tilesetAssets: any;
 	private tilemapAssets: any;
@@ -23,7 +22,7 @@ export class Game {
 
     // Managers
     private mapManager: MapManager = null;
-	private keyManager: KeyManager = new KeyManager();
+	private keyManager: KeyManager = null;
 
     constructor() {
         this.init();
@@ -36,10 +35,15 @@ export class Game {
         this.initializePixiJs();
 
         this.mainContainer = new Container();
+
+		// Changing the position of the main container to center all positions around centerpoint of canvas
+		this.mainContainer.position.set(Game.INITIAL_WIDTH / 2, Game.INITIAL_HEIGHT / 2);
+
         this.app.stage.addChild(this.mainContainer);
 
         await this.loadAssets();
         this.mapManager = new MapManager(this.mainContainer);
+		this.keyManager = new KeyManager();
         await this.mapManager.init();
         this.mapManager.loadMap(1);
 
@@ -158,6 +162,8 @@ export class Game {
         //Add the pixi.js canvas to the HTML document
         document.body.appendChild(<any>this.app.canvas);
 
+		this.app.canvas.style.imageRendering = 'pixelated'
+
         window.onresize = this.onResizeCallback.bind(this);
 
         // Force the onResizeEvent to occur.
@@ -177,7 +183,7 @@ export class Game {
 
 
             //Calculates what the Width & Height should be to fit the same aspect ratio on the screen.
-            const resolutionRatio = this.INITIAL_WIDTH / this.INITIAL_HEIGHT;
+            const resolutionRatio = Game.INITIAL_WIDTH / Game.INITIAL_HEIGHT;
             let calculatedWidth = width;
             let calculatedHeight = width / resolutionRatio;
             if (calculatedHeight > height) {
@@ -189,7 +195,7 @@ export class Game {
 
             //This sets the game's dimensions to what we calculated.
             this.app.renderer.resize(calculatedWidth, calculatedHeight);
-            const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
+            const ratio = Math.min(width / Game.INITIAL_WIDTH, height / Game.INITIAL_HEIGHT);
             this.app.stage.scale.set(ratio);
         }
     }

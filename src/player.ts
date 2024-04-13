@@ -1,5 +1,6 @@
 import {Assets, Sprite, Application, Container, Ticker} from 'pixi.js';
 import {KeyManager} from './managers/key-manager';
+import {Game} from './game';
 
 /** The main player class for the game */
 export class Player {
@@ -54,16 +55,15 @@ export class Player {
 		this.container.rotation = value;
 	}
 
+	private spriteScale = 0.5;
+
 	constructor() {
 		if (!Player._keyManager) throw "Need to define keyManager before creating new player";
 		if (!Player._spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
 		if (!Player._mainContainer) throw "Need to define mainContainer before creating new player";
 
-		this.container.scale.set(0.5, 0.5);
-
-		this.container.position.set(100, 200);
-
 		this.sprite = Sprite.from(Player._spritesheetAssets['player.png']);
+		this.sprite.scale.set(this.spriteScale, this.spriteScale);
 		this.sprite.anchor.set(0.5, 0.5);
 		this.container.addChild(this.sprite);
 
@@ -80,6 +80,11 @@ export class Player {
 	private walkTiltTimer = this.walkTiltTime;
 
 	private update(ticker: Ticker) {
+		this.movement(ticker);
+	}
+
+
+	private movement(ticker: Ticker) {
 		const {deltaMS} = ticker;
 
 		// ------------- movement ------------------
@@ -101,9 +106,9 @@ export class Player {
 		// ------------- player left-right ------------
 
 		if (dx > 0)
-			this.container.scale.set(0.5, 0.5);
+			this.sprite.scale.set(this.spriteScale, this.spriteScale);
 		if (dx < 0)
-			this.container.scale.set(-0.5, 0.5);
+			this.sprite.scale.set(-this.spriteScale, this.spriteScale);
 
 		// ------------- player tilt ------------------
 		
@@ -122,7 +127,6 @@ export class Player {
 				? 0.1 
 				: -0.1
 			: 0;
-
 	}
 }
 

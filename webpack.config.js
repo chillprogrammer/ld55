@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require('path');
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.ts',
   module: {
     rules: [
@@ -12,10 +13,6 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
-	  {
-		test: /\.css$/i,
-		use: ["style-loader", "css-loader"],
-	  }
     ],
   },
   resolve: {
@@ -27,19 +24,14 @@ module.exports = {
   },
 
   plugins: [
-    new HtmlWebpackPlugin({
-      title: 'our project',
-      template: 'src/index.html'
-    })
-  ],
-  plugins: [
     new CopyWebpackPlugin({
         patterns: [
             { from: 'src/assets', to: 'assets' },
         ],
     }),
     new HtmlWebpackPlugin({
-        title: "Game"
+        title: "Game",
+		template: 'src/index.html'
     })
 ],
   devServer: {
