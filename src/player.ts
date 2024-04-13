@@ -4,7 +4,7 @@ import {KeyManager} from './managers/key-manager';
 /** The main player class for the game */
 export class Player {
 
-	private SPEED = 10;
+	private SPEED = 2;
 
 	// ---------------------------- GLOBALS ------------------------------
 
@@ -53,6 +53,8 @@ export class Player {
 		if (!Player._spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
 		if (!Player._mainContainer) throw "Need to define mainContainer before creating new player";
 
+		this.container.scale.set(0.5, 0.5);
+
 		this.sprite = Sprite.from(Player._spritesheetAssets['player.png']);
 		this.container.addChild(this.sprite);
 
@@ -63,7 +65,19 @@ export class Player {
 	}
 
 	private update(ticker: Ticker) {
+		const {deltaTime} = ticker;
 
+		const w = Player._keyManager.isKeyPressed('w');		
+		const a = Player._keyManager.isKeyPressed('a');		
+		const s = Player._keyManager.isKeyPressed('s');		
+		const d = Player._keyManager.isKeyPressed('d');		
+	
+		// The "+" syntax converts a bool to number
+		const dx = (+d - +a) * this.SPEED * deltaTime;
+		const dy = (+s - +w) * this.SPEED * deltaTime;
+
+		this.x += dx;
+		this.y += dy;
 	}
 }
 
