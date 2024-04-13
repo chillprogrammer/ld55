@@ -4,7 +4,7 @@ import {KeyManager} from './managers/key-manager';
 /** The main player class for the game */
 export class Player {
 
-	private SPEED = 2;
+	private SPEED = 0.1;
 
 	// ---------------------------- GLOBALS ------------------------------
 
@@ -61,6 +61,8 @@ export class Player {
 
 		this.container.scale.set(0.5, 0.5);
 
+		this.container.position.set(100, 200);
+
 		this.sprite = Sprite.from(Player._spritesheetAssets['player.png']);
 		this.sprite.anchor.set(0.5, 0.5);
 		this.container.addChild(this.sprite);
@@ -71,22 +73,55 @@ export class Player {
 
 	}
 
-	private update(ticker: Ticker) {
-		const {deltaTime} = ticker;
+	// Time it takes for the player to tilt other direction in ms
+	private walkTiltTime = 100;
+	// Boolean stating whether player is tilting right or left
+	private tiltingRight = true;
+	private walkTiltTimer = this.walkTiltTime;
 
+	private update(ticker: Ticker) {
+		const {deltaMS} = ticker;
+
+		// ------------- movement ------------------
+		
 		const w = Player._keyManager.isKeyPressed('w');		
 		const a = Player._keyManager.isKeyPressed('a');		
 		const s = Player._keyManager.isKeyPressed('s');		
 		const d = Player._keyManager.isKeyPressed('d');		
 	
-		// The "+" syntax converts a bool to number
+		// The "+" syntax converts a boolean to number
 		const dx = (+d - +a);
 		const dy = (+s - +w);
 		let dDist = Math.sqrt(dx ** 2 + dy ** 2);
 		if (dDist == 0) dDist = 1;
 
-		this.x += dx * this.SPEED * deltaTime / dDist;
-		this.y += dy * this.SPEED * deltaTime / dDist;
+		this.x += dx * this.SPEED * deltaMS / dDist;
+		this.y += dy * this.SPEED * deltaMS / dDist;
+
+		// ------------- player left-right ------------
+
+		if (dx > 0)
+			this.container.scale.set(0.5, 0.5);
+		if (dx < 0)
+			this.container.scale.set(-0.5, 0.5);
+
+		// ------------- player tilt ------------------
+		
+		const isMoving = (w || a || s || d);
+		
+		if (isMoving)
+			this.walkTiltTimer -= deltaMS;
+
+		if(this.walkTiltTimer<=0) {
+			this.walkTiltTimer = this.walkTiltTime;	
+			this.tiltingRight = !this.tiltingRight;
+		}
+
+		this.rotation = (isMoving) ?
+			(this.tiltingRight)
+				? 0.1 
+				: -0.1
+			: 0;
 
 	}
 }
