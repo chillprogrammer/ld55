@@ -46,7 +46,13 @@ export class Player {
 		this.container.y = value;
 	}
 
+	private get rotation() {
+		return this.container.rotation;
+	}
 
+	private set rotation(value: number) {
+		this.container.rotation = value;
+	}
 
 	constructor() {
 		if (!Player._keyManager) throw "Need to define keyManager before creating new player";
@@ -56,6 +62,7 @@ export class Player {
 		this.container.scale.set(0.5, 0.5);
 
 		this.sprite = Sprite.from(Player._spritesheetAssets['player.png']);
+		this.sprite.anchor.set(0.5, 0.5);
 		this.container.addChild(this.sprite);
 
 		Player._mainContainer.addChild(this.container);
@@ -78,6 +85,8 @@ export class Player {
 
 		this.x += dx;
 		this.y += dy;
+
+		this.rotation += deltaTime / 10;
 	}
 }
 
