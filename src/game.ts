@@ -2,6 +2,7 @@ import { Application, ApplicationOptions, Assets, Container, TextureStyle } from
 import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
 import { KeyManager } from './managers/key-manager';
+import titlescreen from './titlescreen';
 import { Player } from './player';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -18,6 +19,7 @@ export class Game {
 	public spritesheetAssets: any;
 	public tilesetAssets: any;
 	public tilemapAssets: any;
+	public fontAssets: any;
 	
 
     // Managers
@@ -32,15 +34,13 @@ export class Game {
      * Initial Initialization function
      */
     private async init() {
-        this.initializePixiJs();
+        await this.initializePixiJs();
 
         this.mainContainer = new Container();
 
 		// Changing the position of the main container to center all positions around centerpoint of canvas
 		this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
-
         this.app.stage.addChild(this.mainContainer);
-
         await this.loadAssets();
         this.mapManager = new MapManager(this.mainContainer);
 		this.keyManager = new KeyManager();
@@ -48,6 +48,8 @@ export class Game {
         this.mapManager.loadMap(1);
 
 		this.linkGlobalsToClasses();
+
+		await titlescreen(this);
 
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.
@@ -115,7 +117,16 @@ export class Game {
                             src: 'assets/tilemaps/map1.json', 
 						} 
 					]
-                }
+                },
+				{
+					name: 'fonts',
+					assets: [
+						{
+							alias: 'wendysScript.ttf',
+							src: 'assets/fonts/wendysScript.ttf'
+						}
+					]
+				}
             ]
         };
 
@@ -127,7 +138,7 @@ export class Game {
         this.tilesetAssets = await Assets.loadBundle('tilesets');
         // Load the Tilemap assets
         this.tilemapAssets = await Assets.loadBundle('tilemaps');
-
+        this.fontAssets = await Assets.loadBundle('fonts');
     }
 
 	/**
@@ -197,6 +208,7 @@ export class Game {
 
             //This sets the game's dimensions to what we calculated.
             this.app.renderer.resize(calculatedWidth, calculatedHeight);
+			console.log(this.app.renderer);
             const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
             this.app.stage.scale.set(ratio);
         }
