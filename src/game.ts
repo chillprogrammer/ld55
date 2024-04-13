@@ -1,6 +1,7 @@
 import { Application, ApplicationOptions, Assets, Container, TextureStyle } from "pixi.js";
 import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
+import { KeyManager } from './managers/key-manager';
 import { Player } from './player';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -13,8 +14,15 @@ export class Game {
     private app: Application;
     private mainContainer: Container = null;
 
+	// Assets
+	private spritesheetAssets: any;
+	private tilesetAssets: any;
+	private tilemapAssets: any;
+	
+
     // Managers
     private mapManager: MapManager = null;
+	private keyManager: KeyManager = null;
 
     constructor() {
         this.init();
@@ -27,12 +35,19 @@ export class Game {
         this.initializePixiJs();
 
         this.mainContainer = new Container();
+
+		// Changing the position of the main container to center all positions around centerpoint of canvas
+		this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
+
         this.app.stage.addChild(this.mainContainer);
 
         await this.loadAssets();
         this.mapManager = new MapManager(this.mainContainer);
+		this.keyManager = new KeyManager();
         await this.mapManager.init();
         this.mapManager.loadMap(1);
+
+		this.linkGlobalsToClasses();
 
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.
@@ -41,6 +56,8 @@ export class Game {
 
         ticker.add(this.update.bind(this));
         ticker.start();
+
+		new Player();
     }
 
     private update(ticker: Ticker) {
@@ -105,18 +122,22 @@ export class Game {
         await Assets.init({ manifest });
 
         // Load the Spritesheet assets
-        const spritesheetAssets = await Assets.loadBundle('spritesheets');
-        // Load the TileSet assets
-        const tileSetAssets = await Assets.loadBundle('tilesets');
-
+        this.spritesheetAssets = await Assets.loadBundle('spritesheets');
+        // Load the Tileset assets
+        this.tilesetAssets = await Assets.loadBundle('tilesets');
         // Load the Tilemap assets
-        const tileMapAssets = await Assets.loadBundle('tilemaps');
+        this.tilemapAssets = await Assets.loadBundle('tilemaps');
 
-		Player.setSpritesheetAssets(spritesheetAssets);
-		Player.setMainContainer(this.mainContainer);
-
-		new Player();
     }
+
+
+	private linkGlobalsToClasses() {
+		// Linking Globals to Player
+		Player.mainContainer = this.mainContainer;
+		Player.keyManager = this.keyManager;
+		Player.spritesheetAssets = this.spritesheetAssets;
+	}
+
 
     /**
     * Creates the Pixi.js canvas, and adds it to the HTML document.
@@ -140,6 +161,8 @@ export class Game {
 
         //Add the pixi.js canvas to the HTML document
         document.body.appendChild(<any>this.app.canvas);
+
+		this.app.canvas.style.imageRendering = 'pixelated'
 
         window.onresize = this.onResizeCallback.bind(this);
 
