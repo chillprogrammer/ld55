@@ -31,7 +31,7 @@ export class Game {
     private player: Player = null;
     public wizardSpawner: WizardSpawner = null;
     public destoryableObjects: DestoryableObjects = null;
-    
+
     constructor() {
         this.init();
     }
@@ -69,7 +69,7 @@ export class Game {
         ticker.start();
 
         this.destoryableObjects = new DestoryableObjects();
-        
+
         this.player = new Player();
         this.player.container.zIndex = 1;
 
@@ -118,6 +118,14 @@ export class Game {
                             src: 'assets/sprites/wizard.png'
                         },
                         {
+                            alias: 'wizard_r.png',
+                            src: 'assets/sprites/wizard_r.png'
+                        },
+                        {
+                            alias: 'wizard_g.png',
+                            src: 'assets/sprites/wizard_g.png'
+                        },
+                        {
                             alias: 'floor.png',
                             src: 'assets/sprites/floor.png'
                         },
@@ -128,6 +136,14 @@ export class Game {
                         {
                             alias: 'drink_machine.png',
                             src: 'assets/sprites/drink_machine.png'
+                        },
+                        {
+                            alias: 'trashcan.png',
+                            src: 'assets/sprites/trashcan.png'
+                        },
+                        {
+                            alias: 'trashcan_destroyed.png',
+                            src: 'assets/sprites/trashcan_destroyed.png'
                         },
 
                     ]

@@ -8,7 +8,7 @@ export class WizardSpawner {
     private spriteScale = 1;
     private player: Player = null;
     private spawnPosition: Point;
-    private spawnInterval: number = 5000;
+    private spawnInterval: number = 2000;
     private spawnCounter: number = 0;
 
     public wizardSpeed: number = 0.05;
@@ -61,7 +61,14 @@ export class WizardSpawner {
         const randomNum = Math.floor(Math.random() * 3);
         let targetPoint: Point;
 
+        // Target
         switch (randomNum) {
+            case 0:
+
+                break;
+            case 1:
+
+                break;
             default:
                 targetPoint = this.fountinPos;
                 break;
@@ -69,7 +76,25 @@ export class WizardSpawner {
 
         let wizard = new Wizard(targetPoint);
 
-        wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
+        // Color
+        const randomNum2 = Math.floor(Math.random() * 3);
+        switch (randomNum2) {
+            case 0:
+                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
+                break;
+            case 1:
+                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard_r.png']);
+                break;
+            case 2:
+                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard_g.png']);
+                break;
+            default:
+                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
+                break;
+        }
+
+
+
         wizard.sprite.scale.set(this.spriteScale, this.spriteScale);
         wizard.sprite.anchor.set(0.5, 0.5);
         WizardSpawner.mainContainer.addChild(wizard.sprite);
