@@ -1,6 +1,7 @@
-import { Container, Point, Sprite, Ticker } from "pixi.js";
+import { Bounds, Container, Point, Sprite, Ticker } from "pixi.js";
 import { Game } from "./game";
 import { Player } from "./player";
+import { FountainDrink } from "./destroyable_objects";
 
 export class WizardSpawner {
 
@@ -11,16 +12,13 @@ export class WizardSpawner {
     private spawnInterval: number = 2000;
     private spawnCounter: number = 0;
 
-    public wizardSpeed: number = 0.05;
-
-    public fountinPos: Point;
+    public fountain: FountainDrink;
 
     constructor() {
         if (!WizardSpawner.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
         if (!WizardSpawner.mainContainer) throw "Need to define mainContainer before creating new player";
 
         this.spawnPosition = new Point(WizardSpawner.game.INITIAL_WIDTH / 2, WizardSpawner.game.INITIAL_HEIGHT);
-        this.fountinPos = new Point(0, WizardSpawner.game.INITIAL_HEIGHT / 2);
         Ticker.shared.add(this.update.bind(this));
     }
 
@@ -45,7 +43,8 @@ export class WizardSpawner {
             wizard.sprite.zIndex = (playerYPos < wizardYPos)
                 ? this.player.container.zIndex + 1
                 : this.player.container.zIndex - 1;
-            wizard.sprite.position.y -= deltaTime * this.wizardSpeed;
+
+            wizard.update(deltaTime);
 
             if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
                 wizard.sprite.destroy();
@@ -59,22 +58,17 @@ export class WizardSpawner {
     public createWizard(): Wizard {
 
         const randomNum = Math.floor(Math.random() * 3);
-        let targetPoint: Point;
+        let targetSprite: object;
 
         // Target
         switch (randomNum) {
-            case 0:
-
-                break;
-            case 1:
-
-                break;
             default:
-                targetPoint = this.fountinPos;
+                targetSprite = this.fountain;
                 break;
         }
 
-        let wizard = new Wizard(targetPoint);
+
+        let wizard = new Wizard(targetSprite);
 
         // Color
         const randomNum2 = Math.floor(Math.random() * 3);
@@ -126,13 +120,44 @@ export class WizardSpawner {
 
 export class Wizard {
     public sprite: Sprite;
-    public targetPos: Point;
+    public targetObject: FountainDrink | any;
+    private rotation: number = 0;
+    public wizardSpeed: number = 0.05;
 
-    constructor(_targetPos: Point) {
-        this.targetPos = _targetPos;
+    private MIN_DISTANCE_TO_ATTACK: number = 15;
+
+    constructor(_targetObject: object) {
+        this.targetObject = (<FountainDrink>_targetObject);
     }
 
     update(deltaTime: number) {
 
+        // If sprite doesn't exist, then dont update anything
+        if (!this.sprite || !this.targetObject || !(<any>this.targetObject).sprite) {
+            return;
+        }
+
+
+        const spriteBounds = this.sprite.getBounds();
+        const targetBounds = this.targetObject.sprite.getBounds();
+
+        if (
+            !(spriteBounds.x < targetBounds.x + targetBounds.width
+            && spriteBounds.x + spriteBounds.width > targetBounds.x
+            && spriteBounds.y < targetBounds.y + targetBounds.height
+            && spriteBounds.y + spriteBounds.height > targetBounds.y)
+        ) {
+            this.move(deltaTime);
+        }
+
+
+
+
+        this.sprite.rotation = this.rotation;
     }
+
+    move(deltaTime: number): void {
+        this.sprite.position.y -= deltaTime * this.wizardSpeed;
+    }
+
 }

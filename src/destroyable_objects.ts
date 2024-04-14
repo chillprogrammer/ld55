@@ -42,6 +42,10 @@ export class DestoryableObjects {
         const deltaTime = ticker.deltaMS;
     }
 
+    public getFountain(): FountainDrink {
+        return this.fountainDrink;
+    }
+
 }
 
 export class FountainDrink {

@@ -74,6 +74,7 @@ export class Game {
         this.player.container.zIndex = 1;
 
         this.wizardSpawner = new WizardSpawner();
+        this.wizardSpawner.fountain = this.destoryableObjects.getFountain();
         this.wizardSpawner.setPlayer(this.player);
         this.wizardSpawner.createWizard();
     }
