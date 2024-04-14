@@ -6,6 +6,7 @@ import titlescreen from './titlescreen';
 import createMap from './map';
 import { Player } from './player';
 import { WizardSpawner } from "./wizard";
+import { DestoryableObjects } from "./destroyable_objects";
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -29,7 +30,8 @@ export class Game {
     public keyManager: KeyManager = null;
     private player: Player = null;
     public wizardSpawner: WizardSpawner = null;
-
+    public destoryableObjects: DestoryableObjects = null;
+    
     constructor() {
         this.init();
     }
@@ -66,8 +68,11 @@ export class Game {
         ticker.add(this.update.bind(this));
         ticker.start();
 
+        this.destoryableObjects = new DestoryableObjects();
+        
         this.player = new Player();
         this.player.container.zIndex = 1;
+
         this.wizardSpawner = new WizardSpawner();
         this.wizardSpawner.setPlayer(this.player);
         this.wizardSpawner.createWizard();
@@ -119,6 +124,10 @@ export class Game {
                         {
                             alias: 'counter.png',
                             src: 'assets/sprites/counter.png'
+                        },
+                        {
+                            alias: 'drink_machine.png',
+                            src: 'assets/sprites/drink_machine.png'
                         },
 
                     ]
@@ -173,6 +182,7 @@ export class Game {
         // Linking Globals to Player
         Player.setGame(this);
         WizardSpawner.setGame(this);
+        DestoryableObjects.setGame(this);
     }
 
 
