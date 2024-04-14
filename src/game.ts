@@ -75,7 +75,6 @@ export class Game {
 
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaTime;
-        //console.log(deltaTime)
     }
 
 
@@ -188,7 +187,6 @@ export class Game {
             backgroundAlpha: 1,
             clearBeforeRender: false,
             context: undefined,
-            powerPreference: "high-performance",
             premultipliedAlpha: false,
             preserveDrawingBuffer: false,
             hello: false

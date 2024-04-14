@@ -1,4 +1,4 @@
-import { Container, Sprite, Ticker } from "pixi.js";
+import { Container, Point, Sprite, Ticker } from "pixi.js";
 import { Game } from "./game";
 import { Player } from "./player";
 
@@ -7,27 +7,48 @@ export class WizardSpawner {
     private wizardList: Wizard[] = [];
     private spriteScale = 1;
     private player: Player = null;
+    private spawnPosition: Point;
+    private spawnInterval: number = 5000;
+    private spawnCounter: number = 0;
 
-
+    public wizardSpeed: number = 0.05;
 
     constructor() {
         if (!WizardSpawner.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
         if (!WizardSpawner.mainContainer) throw "Need to define mainContainer before creating new player";
 
-        //this.container.position.set(WizardSpawner.game.INITIAL_WIDTH / 2, WizardSpawner.game.INITIAL_HEIGHT / 2);
+        this.spawnPosition = new Point(WizardSpawner.game.INITIAL_WIDTH / 2, WizardSpawner.game.INITIAL_HEIGHT);
+
         Ticker.shared.add(this.update.bind(this));
     }
 
 
     private update(ticker: Ticker) {
-        const playerYPos = this.player.y;
-        //console.log(this.player.sprite.zIndex)
-        for (const wizard of this.wizardList) {
-            const wizardYPos = wizard.sprite.position.y;
+        const deltaTime = ticker.deltaMS;
+        this.spawnCounter += deltaTime;
 
+
+        if (this.spawnCounter > this.spawnInterval) {
+            this.spawnCounter = 0;
+
+            this.createWizard();
+        }
+
+        const playerYPos = this.player.y;
+
+        for (let i = 0; i < this.wizardList.length; i++) {
+            const wizard = this.wizardList[i];
+
+            const wizardYPos = wizard.sprite.position.y;
             wizard.sprite.zIndex = (playerYPos < wizardYPos)
                 ? this.player.container.zIndex + 1
                 : this.player.container.zIndex - 1;
+            wizard.sprite.position.y -= deltaTime * this.wizardSpeed;
+
+            // if (wizard.sprite.position.y < 5) {
+            //     wizard.sprite.destroy();
+            //     this.wizardList.splice(i, 1);
+            // }
         }
 
     }
@@ -39,7 +60,7 @@ export class WizardSpawner {
         wizard.sprite.scale.set(this.spriteScale, this.spriteScale);
         wizard.sprite.anchor.set(0.5, 0.5);
         WizardSpawner.mainContainer.addChild(wizard.sprite);
-        wizard.sprite.position.set(WizardSpawner.game.INITIAL_WIDTH / 2, WizardSpawner.game.INITIAL_HEIGHT / 2);
+        wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
         this.wizardList.push(wizard);
         return wizard;
     }
@@ -66,6 +87,5 @@ export class WizardSpawner {
 
 export class Wizard {
     public sprite: Sprite;
-
     public attackFountainSoda() { }
 }
