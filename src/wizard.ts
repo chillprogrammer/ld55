@@ -2,6 +2,7 @@ import { Bounds, Container, Point, Sprite, Ticker } from "pixi.js";
 import { Game } from "./game";
 import { Player } from "./player";
 import { FountainDrink } from "./destroyable_objects";
+import { ZIndexManager } from './managers/zIndex-manager';
 
 export class WizardSpawner {
 
@@ -39,23 +40,19 @@ export class WizardSpawner {
         for (let i = 0; i < this.wizardList.length; i++) {
             const wizard = this.wizardList[i];
 
-            const wizardYPos = wizard.sprite.position.y;
-            wizard.sprite.zIndex = (playerYPos < wizardYPos)
-                ? this.player.container.zIndex + 1
-                : this.player.container.zIndex - 1;
-
             wizard.update(deltaTime);
 
             if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
                 wizard.sprite.destroy();
                 this.wizardList.splice(i, 1);
+				i--;
             }
         }
 
     }
 
 
-    public createWizard(): Wizard {
+    public createWizard()/*: Wizard*/ {
 
         const randomNum = Math.floor(Math.random() * 3);
         let targetSprite: object;
@@ -94,6 +91,7 @@ export class WizardSpawner {
         WizardSpawner.mainContainer.addChild(wizard.sprite);
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
         this.wizardList.push(wizard);
+		console.log(this.wizardList);
         return wizard;
     }
 
@@ -156,6 +154,25 @@ export class Wizard {
 
         this.sprite.rotation = this.rotation;
     }
+
+	public getZIndexY() {
+		let y: number;
+		try {
+			const bounds = this.sprite.getBounds();
+			y = bounds.bottom;
+	//		y = this.sprite.y + this.sprite.height / 2;
+		} catch(err) {
+			return undefined;
+		}
+		return y;
+	}
+
+	public setZIndex(value: number) {
+		this.sprite.zIndex = value;
+	}
+
+	private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
+
 
     private makeWizardSpin() {
 

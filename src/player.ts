@@ -65,11 +65,13 @@ export class Player {
 	// ---------------------- Z Index Manager ------------------------
 
 	public getZIndexY() {
-		return this.y + this.container.height / 2;
+		return this.container.getBounds().bottom;
+//		return this.y + this.container.height / 2;
 	}
 
 	public setZIndex(value: number) {
 		this.container.zIndex = value;
+//		this.container.zIndex = value;
 	}
 
 	private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));

@@ -1,5 +1,6 @@
 import { Container, Point, Sprite, Ticker } from "pixi.js";
 import { Game } from "./game";
+import { ZIndexManager } from './managers/zIndex-manager'
 
 
 export class DestoryableObjects {
@@ -52,6 +53,16 @@ export class FountainDrink {
     public sprite: Sprite = null;
     public health: number = 100;
     public spriteScale: number = 1;
+
+	public getZIndexY() {
+		return this.sprite.getBounds().bottom
+	}
+
+	public setZIndex(value: number) {
+		this.sprite.zIndex = value;
+	}
+
+	public zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
 
     constructor() {
         this.sprite = Sprite.from(DestoryableObjects.spritesheetAssets['drink_machine.png']);

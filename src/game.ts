@@ -44,6 +44,7 @@ export class Game {
         await this.initializePixiJs();
 
         this.mainContainer = new Container();
+		this.mainContainer.sortableChildren = true;
 
         // Changing the position of the main container to center all positions around centerpoint of canvas
         // this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
@@ -84,6 +85,8 @@ export class Game {
         const deltaTime = ticker.deltaTime;
 		
 		ZIndexManager.arrangeZIndicies();
+		this.mainContainer.sortChildren()
+		this.mainContainer.sortDirty = true;
     }
 
 
@@ -149,7 +152,14 @@ export class Game {
                             alias: 'trashcan_destroyed.png',
                             src: 'assets/sprites/trashcan_destroyed.png'
                         },
-
+						{
+							alias: 'wall.png',
+                            src: 'assets/sprites/wall.png',
+						},
+						{
+							alias: 'wallBaseboard.png',
+                            src: 'assets/sprites/wallBaseboard.png',
+						}	
                     ]
                 },
                 {
