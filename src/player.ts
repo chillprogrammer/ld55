@@ -91,8 +91,6 @@ export class Player {
 
 		this.broom = Sprite.from(Player.spritesheetAssets['broom.png']);
 		this.broom.anchor.set(0.5, 0.5);
-		this.broom.position.set(0, 5);
-		this.broom.rotation = 1;
 		this.container.addChild(this.broom);
 
 		this.container.position.set(Player.game.INITIAL_WIDTH / 2, Player.game.INITIAL_HEIGHT / 2);
@@ -170,10 +168,27 @@ export class Player {
 				if (Player.keyManager.isKeyPressed('mouse0')) {
 					this.broomState = 'Prehit';	
 				}
+
+				this.broom.position.set(0, 5);
+				this.broom.rotation = 1;
 			break;
 			case 'Prehit':
+				if (!Player.keyManager.isKeyPressed('mouse0')) {
+					this.broomState = 'Hitting';
+					this.broomTimer = this.broomHitDelay;
+				}
+
+				this.broom.position.set(-4, 0);
+				this.broom.rotation = Math.PI / 2 + 0.2;
 			break;
 			case 'Hitting':
+				if (this.broomTimer <= 0) {
+					this.broomState = 'Holding';
+				}
+				this.broomTimer -= ticker.deltaMS; 
+
+				this.broom.position.set(16, 0);
+				this.broom.rotation = -Math.PI / 2;
 			break;
 		}
 	}
