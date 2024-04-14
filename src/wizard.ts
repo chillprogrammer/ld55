@@ -57,8 +57,17 @@ export class WizardSpawner {
 
 
     public createWizard(): Wizard {
-        
-        let wizard = new Wizard(this.fountinPos);
+
+        const randomNum = Math.floor(Math.random() * 3);
+        let targetPoint: Point;
+
+        switch (randomNum) {
+            default:
+                targetPoint = this.fountinPos;
+                break;
+        }
+
+        let wizard = new Wizard(targetPoint);
 
         wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
         wizard.sprite.scale.set(this.spriteScale, this.spriteScale);
