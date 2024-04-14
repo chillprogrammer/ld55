@@ -88,7 +88,7 @@ export class Player {
 	public getZIndexY() {
 		return this.container.getBounds().bottom;
 //		return this.y + this.container.height / 2;
-	}
+}
 
 	public setZIndex(value: number) {
 		this.container.zIndex = value;
