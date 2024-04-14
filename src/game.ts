@@ -5,6 +5,7 @@ import { KeyManager } from './managers/key-manager';
 import titlescreen from './titlescreen';
 import createMap from './map';
 import { Player } from './player';
+import { ZIndexManager } from './managers/zIndex-manager';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -68,7 +69,8 @@ export class Game {
 
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaTime;
-        //console.log(deltaTime)
+		
+		ZIndexManager.arrangeZIndicies();
     }
 
 
@@ -221,7 +223,6 @@ export class Game {
 
             //This sets the game's dimensions to what we calculated.
             this.app.renderer.resize(calculatedWidth, calculatedHeight);
-			console.log(this.app.renderer);
             const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
             this.app.stage.scale.set(ratio);
         }
