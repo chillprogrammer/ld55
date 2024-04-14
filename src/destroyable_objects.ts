@@ -7,6 +7,7 @@ export class DestoryableObjects {
 
 
     private fountainDrink: FountainDrink;
+    private trashCans: TrashCan[] = [];
 
 
     constructor() {
@@ -16,6 +17,30 @@ export class DestoryableObjects {
         this.fountainDrink = new FountainDrink();
         DestoryableObjects.mainContainer.addChild(this.fountainDrink.sprite);
 
+        for (let i = 0; i < 3; i++) {
+            let trashCan = new TrashCan();
+            this.trashCans.push(trashCan);
+            DestoryableObjects.mainContainer.addChild(trashCan.sprite);
+
+            switch (i) {
+                case 0:
+                    trashCan.sprite.position = new Point(DestoryableObjects.game.INITIAL_WIDTH - 15, DestoryableObjects.game.INITIAL_HEIGHT / 2 - 38);
+                    break;
+
+                case 1:
+                    trashCan.sprite.position = new Point(15, DestoryableObjects.game.INITIAL_HEIGHT / 2 + 80);
+                    break;
+
+                case 2:
+                    trashCan.sprite.position = new Point(DestoryableObjects.game.INITIAL_WIDTH - 15, DestoryableObjects.game.INITIAL_HEIGHT / 2 + 80);
+                    break;
+
+                default:
+                    trashCan.sprite.position = new Point(DestoryableObjects.game.INITIAL_WIDTH / 2, DestoryableObjects.game.INITIAL_HEIGHT / 2);
+                    break;
+
+            }
+        }
 
         Ticker.shared.add(this.update.bind(this));
     }
@@ -47,6 +72,10 @@ export class DestoryableObjects {
         return this.fountainDrink;
     }
 
+    public getTrashcans(): TrashCan[] {
+        return this.trashCans;
+    }
+
 }
 
 export class FountainDrink {
@@ -54,21 +83,47 @@ export class FountainDrink {
     public health: number = 100;
     public spriteScale: number = 1;
 
-	public getZIndexY() {
-		return this.sprite.getBounds().bottom
-	}
+    public getZIndexY() {
+        return this.sprite.getBounds().bottom
+    }
 
-	public setZIndex(value: number) {
-		this.sprite.zIndex = value;
-	}
+    public setZIndex(value: number) {
+        this.sprite.zIndex = value;
+    }
 
-	public zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
+    public zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
 
     constructor() {
         this.sprite = Sprite.from(DestoryableObjects.spritesheetAssets['drink_machine.png']);
         this.sprite.scale.set(this.spriteScale, this.spriteScale);
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.position = new Point(this.sprite.width / 2 + 5, DestoryableObjects.game.INITIAL_HEIGHT / 2 - 40)
+    }
+
+    public update(deltaTime: number) {
+
+    }
+}
+
+export class TrashCan {
+    public sprite: Sprite = null;
+    public health: number = 100;
+    public spriteScale: number = 1;
+
+    public getZIndexY() {
+        return this.sprite.getBounds().bottom
+    }
+
+    public setZIndex(value: number) {
+        this.sprite.zIndex = value;
+    }
+
+    public zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
+
+    constructor() {
+        this.sprite = Sprite.from(DestoryableObjects.spritesheetAssets['trashcan.png']);
+        this.sprite.scale.set(this.spriteScale, this.spriteScale);
+        this.sprite.anchor.set(0.5, 0.5);
     }
 
     public update(deltaTime: number) {

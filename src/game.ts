@@ -77,6 +77,7 @@ export class Game {
 
         this.wizardSpawner = new WizardSpawner();
         this.wizardSpawner.fountain = this.destoryableObjects.getFountain();
+        this.wizardSpawner.trashCans = this.destoryableObjects.getTrashcans();
         this.wizardSpawner.setPlayer(this.player);
         this.wizardSpawner.createWizard();
     }
