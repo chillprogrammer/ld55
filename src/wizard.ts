@@ -123,7 +123,9 @@ export class Wizard {
     public targetObject: FountainDrink | any;
     private rotation: number = 0;
     public wizardSpeed: number = 0.05;
-
+    private rotationDirection: number = 1;
+    private MAX_ROTATION_AMOUNT: number = 0.08;
+    private deltaTime: number;
     private MIN_DISTANCE_TO_ATTACK: number = 15;
 
     constructor(_targetObject: object) {
@@ -141,6 +143,7 @@ export class Wizard {
     }
 
     update(deltaTime: number) {
+        this.deltaTime = deltaTime;
 
         // If sprite doesn't exist, then dont update anything
         if (!this.sprite || !this.targetObject || !(<any>this.targetObject).sprite) {
@@ -154,8 +157,24 @@ export class Wizard {
         this.sprite.rotation = this.rotation;
     }
 
+    private makeWizardSpin() {
+
+
+        if (this.rotation > this.MAX_ROTATION_AMOUNT) {
+            this.rotation = this.MAX_ROTATION_AMOUNT;
+            this.rotationDirection = -0.5;
+        }
+        else if (this.rotation < -this.MAX_ROTATION_AMOUNT) {
+            this.rotation = -this.MAX_ROTATION_AMOUNT;
+            this.rotationDirection = 0.5;
+        }
+
+        this.rotation += 0.001 * this.deltaTime * this.rotationDirection;
+    }
+
     move(deltaTime: number): void {
         this.sprite.position.y -= deltaTime * this.wizardSpeed;
+        this.makeWizardSpin();
     }
 
 }
