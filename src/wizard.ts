@@ -13,12 +13,14 @@ export class WizardSpawner {
 
     public wizardSpeed: number = 0.05;
 
+    public fountinPos: Point;
+
     constructor() {
         if (!WizardSpawner.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
         if (!WizardSpawner.mainContainer) throw "Need to define mainContainer before creating new player";
 
         this.spawnPosition = new Point(WizardSpawner.game.INITIAL_WIDTH / 2, WizardSpawner.game.INITIAL_HEIGHT);
-
+        this.fountinPos = new Point(0, WizardSpawner.game.INITIAL_HEIGHT / 2);
         Ticker.shared.add(this.update.bind(this));
     }
 
@@ -45,17 +47,19 @@ export class WizardSpawner {
                 : this.player.container.zIndex - 1;
             wizard.sprite.position.y -= deltaTime * this.wizardSpeed;
 
-            // if (wizard.sprite.position.y < 5) {
-            //     wizard.sprite.destroy();
-            //     this.wizardList.splice(i, 1);
-            // }
+            if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
+                wizard.sprite.destroy();
+                this.wizardList.splice(i, 1);
+            }
         }
 
     }
 
 
     public createWizard(): Wizard {
-        let wizard = new Wizard();
+        
+        let wizard = new Wizard(this.fountinPos);
+
         wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
         wizard.sprite.scale.set(this.spriteScale, this.spriteScale);
         wizard.sprite.anchor.set(0.5, 0.5);
@@ -83,9 +87,18 @@ export class WizardSpawner {
     public static setGame(game: Game) {
         WizardSpawner.game = game;
     }
+
 }
 
 export class Wizard {
     public sprite: Sprite;
-    public attackFountainSoda() { }
+    public targetPos: Point;
+
+    constructor(_targetPos: Point) {
+        this.targetPos = _targetPos;
+    }
+
+    update(deltaTime: number) {
+
+    }
 }
