@@ -2,6 +2,7 @@ import {Assets, Sprite, Application, Container, Ticker} from 'pixi.js';
 import {KeyManager} from './managers/key-manager';
 import {ZIndexManager} from './managers/zIndex-manager';
 import {Game} from './game';
+import {Howl} from 'howler'
 
 /** The main player class for the game */
 export class Player {
@@ -36,6 +37,20 @@ export class Player {
 	public container: Container = new Container();
 	public sprite: Sprite;
 	public broom: Sprite;
+
+	private broomSweepSound = new Howl({
+		volume: 0.4,
+		src: ['assets/sounds/BroomSweep.wav']
+	});
+
+	private broomReadySound = new Howl({
+		volume: 0.4,
+		src: ['assets/sounds/BroomReady.wav']
+	});
+
+	private broomHitSound = new Howl({
+		src: ['assets/sounds/Broomhit.wav']
+	});
 
 	public get x() {
 		return this.container.x;
@@ -158,7 +173,9 @@ export class Player {
 			: 0;
 	}
 
-	private broomState: 'Holding' | 'Prehit' | 'Hitting' = 'Holding';
+	private broomState: 'Holding' | 'Prehit' | 'Hitting' | 'Sweeping' = 'Holding';
+	private broomSweepDelay = 300;
+	private broomSweepTimer = this.broomSweepDelay;
 	private broomHitDelay = 200;
 	private broomTimer = this.broomHitDelay;
 
@@ -167,8 +184,13 @@ export class Player {
 			case 'Holding':
 				if (Player.keyManager.isKeyPressed('mouse0')) {
 					this.broomState = 'Prehit';	
+					this.broomReadySound.play();
 				}
-
+				if(Player.keyManager.isKeyPressed('mouse2')) {
+					this.broomState = 'Sweeping';
+					this.broomSweepSound.play();
+				}
+				this.broom.anchor.set(0.5, 0.5);
 				this.broom.position.set(0, 5);
 				this.broom.rotation = 1;
 			break;
@@ -178,17 +200,36 @@ export class Player {
 					this.broomTimer = this.broomHitDelay;
 				}
 
+				this.broom.anchor.set(0.5, 0.5);
 				this.broom.position.set(-4, 0);
 				this.broom.rotation = Math.PI / 2 + 0.2;
 			break;
 			case 'Hitting':
+				if (this.broomTimer === this.broomHitDelay) {
+					console.log("BANG");
+					this.broomHitSound.play();
+				}
+
 				if (this.broomTimer <= 0) {
 					this.broomState = 'Holding';
 				}
 				this.broomTimer -= ticker.deltaMS; 
 
-				this.broom.position.set(16, 0);
+				this.broom.anchor.set(0.5, 0.2);
+				this.broom.position.set(8, 0);
 				this.broom.rotation = -Math.PI / 2;
+			break;
+			case 'Sweeping':
+				if (this.broomSweepTimer <= 0) {
+					this.broomState = 'Holding';
+					this.broomSweepTimer = this.broomSweepDelay;
+				}
+				this.broomSweepTimer -= ticker.deltaMS; 
+				const sweepFactor = (this.broomSweepTimer / this.broomSweepDelay) * 2 - 1;
+
+				this.broom.anchor.set(0.5, 0.2);
+				this.broom.position.set(0, 0);
+				this.broom.rotation = Math.PI * sweepFactor / 4;
 			break;
 		}
 	}

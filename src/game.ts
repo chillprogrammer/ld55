@@ -247,6 +247,11 @@ export class Game {
         document.body.appendChild(<any>this.app.canvas);
 
         this.app.canvas.style.imageRendering = 'pixelated'
+		this.app.canvas.oncontextmenu = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
 
         window.onresize = this.onResizeCallback.bind(this);
 
