@@ -1,4 +1,4 @@
-import {TilingSprite, Texture, Ticker} from 'pixi.js';
+import {TilingSprite, Texture, Ticker, Sprite} from 'pixi.js';
 import {Game} from './game';
 import {Player} from './player';
 import {ZIndexManager} from './managers/zIndex-manager';
@@ -7,7 +7,7 @@ const TILE_SIZE = 32;
 
 export default function createMap(game: Game) {
 
-	const createMapElements = (...sprites: TilingSprite[]) => {
+	const createMapElements = (...sprites: (TilingSprite | Sprite)[]) => {
 		for(const sprite of sprites) {
 			if (sprite.zIndex === 0) {
 				new ZIndexManager(
@@ -67,8 +67,14 @@ export default function createMap(game: Game) {
 		y: TILE_SIZE * 2
 	});
 
+	const billboard = new Sprite({
+		texture: game.spritesheetAssets['billboard.png'],
+		x: TILE_SIZE * 3,
+		zIndex: 255
+	});
+
 	createMapElements(
-		counter, floor, leftWallTop, leftWallBottom, rightWallTop, rightWallBottom
+		counter, floor, leftWallTop, leftWallBottom, rightWallTop, rightWallBottom, billboard
 	);
 
 }

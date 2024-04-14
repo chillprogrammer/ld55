@@ -35,6 +35,7 @@ export class Player {
 
 	public container: Container = new Container();
 	public sprite: Sprite;
+	public broom: Sprite;
 
 	public get x() {
 		return this.container.x;
@@ -88,6 +89,12 @@ export class Player {
 		this.sprite.anchor.set(0.5, 0.5);
 		this.container.addChild(this.sprite);
 
+		this.broom = Sprite.from(Player.spritesheetAssets['broom.png']);
+		this.broom.anchor.set(0.5, 0.5);
+		this.broom.position.set(0, 5);
+		this.broom.rotation = 1;
+		this.container.addChild(this.broom);
+
 		this.container.position.set(Player.game.INITIAL_WIDTH / 2, Player.game.INITIAL_HEIGHT / 2);
 
 		Player.mainContainer.addChild(this.container);
@@ -104,6 +111,7 @@ export class Player {
 
 	private update(ticker: Ticker) {
 		this.movement(ticker);
+		this.broomLogic(ticker);
 	}
 
 
@@ -129,9 +137,9 @@ export class Player {
 		// ------------- player left-right ------------
 
 		if (dx > 0)
-			this.sprite.scale.set(this.spriteScale, this.spriteScale);
+			this.container.scale.set(this.spriteScale, this.spriteScale);
 		if (dx < 0)
-			this.sprite.scale.set(-this.spriteScale, this.spriteScale);
+			this.container.scale.set(-this.spriteScale, this.spriteScale);
 
 		// ------------- player tilt ------------------
 		
@@ -151,6 +159,25 @@ export class Player {
 				: -0.1
 			: 0;
 	}
+
+	private broomState: 'Holding' | 'Prehit' | 'Hitting' = 'Holding';
+	private broomHitDelay = 200;
+	private broomTimer = this.broomHitDelay;
+
+	private broomLogic(ticker: Ticker) {
+		switch(this.broomState) {
+			case 'Holding':
+				if (Player.keyManager.isKeyPressed('mouse0')) {
+					this.broomState = 'Prehit';	
+				}
+			break;
+			case 'Prehit':
+			break;
+			case 'Hitting':
+			break;
+		}
+	}
+
 }
 
 

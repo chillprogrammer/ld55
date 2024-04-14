@@ -159,7 +159,15 @@ export class Game {
 						{
 							alias: 'wallBaseboard.png',
                             src: 'assets/sprites/wallBaseboard.png',
-						}	
+						},
+						{
+							alias: 'billboard.png',
+                            src: 'assets/sprites/billboard.png',
+						},
+						{
+							alias: 'broom.png',
+                            src: 'assets/sprites/broom.png',
+						},
                     ]
                 },
                 {

@@ -9,8 +9,10 @@ export class KeyManager {
     private keyReleasedSubject: Subject<string> = new Subject<string>();
 
     constructor() {
-        document.addEventListener('keydown', (ev: KeyboardEvent) => { this.keyDown(ev) })
-        document.addEventListener('keyup', (ev: KeyboardEvent) => { this.keyReleased(ev) })
+        document.addEventListener('keydown', (ev: KeyboardEvent) => { this.keyDown(ev) });
+        document.addEventListener('keyup', (ev: KeyboardEvent) => { this.keyReleased(ev) });
+		document.addEventListener('mousedown', (ev: MouseEvent) => { this.mouseButtonDown(ev) });
+		document.addEventListener('mouseup', (ev: MouseEvent) => { this.mouseButtonReleased(ev) });
     }
 
     /**
@@ -49,6 +51,39 @@ export class KeyManager {
             this.keyReleasedSubject.next(key);
         }
     }
+
+    /**
+     * Internal to KeyManagerService.
+     * Runs when a mouse button is pressed
+     * @param ev 
+     */
+	private mouseButtonDown(ev: MouseEvent): void {
+		const button: string = `mouse${ev.button}`;
+		if (!this.keyList.includes(button)) {
+        	this.keyList.push(button);
+
+            // Emit the key
+			this.keyDownSubject.next(button);
+		}
+
+	}
+	
+    /**
+     * Internal to KeyManagerService.
+     * Runs when a mouse button is released
+     * @param ev 
+     */
+	private mouseButtonReleased(ev: MouseEvent): void {
+		const button: string = `mouse${ev.button}`;
+        if (this.keyList.indexOf(button) >= 0) {
+            this.keyList = this.keyList.filter(function (x) {
+                return x !== button;
+            });
+
+            // Emit the key
+            this.keyReleasedSubject.next(button);
+		}
+	}
 
     /**
      * 
