@@ -1,6 +1,7 @@
 import {TilingSprite, Texture, Ticker} from 'pixi.js';
 import {Game} from './game';
 import {Player} from './player';
+import {ZIndexManager} from './managers/zIndex-manager';
 
 export default function createMap(game: Game) {
 	const counter = new TilingSprite({
@@ -23,7 +24,16 @@ export default function createMap(game: Game) {
 	counter.position.x = 32 * 3;
 	counter.width = 32 * 9;
 
-	Ticker.shared.add((ticker: Ticker)=>{
+	new ZIndexManager(
+		() => {
+			return counter.position.y + counter.height
+		},
+		(value: number) => {
+			counter.zIndex = value;
+		}
+	);	
+
+	/*Ticker.shared.add((ticker: Ticker)=>{
 		if (!Player.instance) return;
 		const player = Player.instance;
 		const bottomPlayer = player.y;
@@ -31,7 +41,7 @@ export default function createMap(game: Game) {
 		counter.zIndex = (bottomPlayer < bottomCounter)
 			? 100
 			: -99;
-	});
+	});*/
 
 	game.mainContainer.addChild(floor);
 	game.mainContainer.addChild(counter);

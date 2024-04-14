@@ -1,5 +1,6 @@
 import {Assets, Sprite, Application, Container, Ticker} from 'pixi.js';
 import {KeyManager} from './managers/key-manager';
+import {ZIndexManager} from './managers/zIndex-manager';
 import {Game} from './game';
 
 /** The main player class for the game */
@@ -61,6 +62,18 @@ export class Player {
 
 	private spriteScale = 1;
 
+	// ---------------------- Z Index Manager ------------------------
+
+	public getZIndexY() {
+		return this.y + this.container.height / 2;
+	}
+
+	public setZIndex(value: number) {
+		this.container.zIndex = value;
+	}
+
+	private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
+
 	constructor() {
 		if (!Player.keyManager) throw "Need to define keyManager before creating new player";
 		if (!Player.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
@@ -98,7 +111,7 @@ export class Player {
 		// ------------- movement ------------------
 		
 		const w = Player.keyManager.isKeyPressed('w');		
-		const a = Player.keyManager.isKeyPressed('a');		
+		const a = Player.keyManager.isKeyPressed('a');
 		const s = Player.keyManager.isKeyPressed('s');		
 		const d = Player.keyManager.isKeyPressed('d');		
 	

@@ -7,6 +7,7 @@ import createMap from './map';
 import { Player } from './player';
 import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
+import { ZIndexManager } from './managers/zIndex-manager';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -81,6 +82,8 @@ export class Game {
 
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaTime;
+		
+		ZIndexManager.arrangeZIndicies();
     }
 
 
@@ -258,7 +261,6 @@ export class Game {
 
             //This sets the game's dimensions to what we calculated.
             this.app.renderer.resize(calculatedWidth, calculatedHeight);
-            console.log(this.app.renderer);
             const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
             this.app.stage.scale.set(ratio);
         }
