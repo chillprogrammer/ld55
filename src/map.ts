@@ -3,46 +3,72 @@ import {Game} from './game';
 import {Player} from './player';
 import {ZIndexManager} from './managers/zIndex-manager';
 
+const TILE_SIZE = 32;
+
 export default function createMap(game: Game) {
+
+	const createMapElements = (...sprites: TilingSprite[]) => {
+		for(const sprite of sprites) {
+			if (sprite.zIndex === 0) {
+				new ZIndexManager(
+					() => {
+						return sprite.getBounds().bottom;
+					},
+					(value: number) => {
+						sprite.zIndex = value;
+					}
+				);
+			}
+			game.mainContainer.addChild(sprite);
+		}
+	}
+
 	const counter = new TilingSprite({
 		texture: game.spritesheetAssets['counter.png'],
-		width: 32,
-		height: 32
+		width: TILE_SIZE * 9,
+		height: TILE_SIZE,
+		x: TILE_SIZE * 3,
+		y: TILE_SIZE * 2
 	});
 
 	const floor = new TilingSprite({
 		texture: game.spritesheetAssets['floor.png'],
-		width: 32,
-		height: 32
+		width: game.INITIAL_WIDTH,
+		height: game.INITIAL_HEIGHT,
+		zIndex: -10
 	});
 
-	floor.zIndex = -100;
-	floor.width = game.INITIAL_WIDTH;
-	floor.height = game.INITIAL_HEIGHT;
+	const leftWallTop = new TilingSprite({
+		texture: game.spritesheetAssets['wall.png'], 
+		width: TILE_SIZE * 3,
+		height: TILE_SIZE * 2.5
+	});
+	const leftWallBottom = new TilingSprite({
+		texture: game.spritesheetAssets['wallBaseboard.png'], 
+		width: TILE_SIZE * 3,
+		height: TILE_SIZE * 1,
+		y: TILE_SIZE * 2
+	});
 
-	counter.position.y = 32 * 2;
-	counter.position.x = 32 * 3;
-	counter.width = 32 * 9;
+	const rightWallX = TILE_SIZE * 12;
 
-	new ZIndexManager(
-		() => {
-			return counter.position.y + counter.height
-		},
-		(value: number) => {
-			counter.zIndex = value;
-		}
-	);	
+	const rightWallTop = new TilingSprite({
+		texture: game.spritesheetAssets['wall.png'], 
+		x: rightWallX,
+		width: TILE_SIZE * 3,
+		height: TILE_SIZE * 2.5
+	});
 
-	/*Ticker.shared.add((ticker: Ticker)=>{
-		if (!Player.instance) return;
-		const player = Player.instance;
-		const bottomPlayer = player.y;
-		const bottomCounter = counter.position.y + counter.height / 2;
-		counter.zIndex = (bottomPlayer < bottomCounter)
-			? 100
-			: -99;
-	});*/
+	const rightWallBottom = new TilingSprite({
+		texture: game.spritesheetAssets['wallBaseboard.png'], 
+		x: rightWallX,
+		width: TILE_SIZE * 3,
+		height: TILE_SIZE * 1,
+		y: TILE_SIZE * 2
+	});
 
-	game.mainContainer.addChild(floor);
-	game.mainContainer.addChild(counter);
+	createMapElements(
+		counter, floor, leftWallTop, leftWallBottom, rightWallTop, rightWallBottom
+	);
+
 }
