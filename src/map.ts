@@ -25,9 +25,9 @@ export default function createMap(game: Game) {
 
 	const counter = new TilingSprite({
 		texture: game.spritesheetAssets['counter.png'],
-		width: TILE_SIZE * 9,
+		width: TILE_SIZE * 5,
 		height: TILE_SIZE,
-		x: TILE_SIZE * 3,
+		x: TILE_SIZE * 5,
 		y: TILE_SIZE * 2
 	});
 
