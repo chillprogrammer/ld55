@@ -52,6 +52,11 @@ export class Player {
 		src: ['assets/sounds/Broomhit.wav']
 	});
 
+	private footstepSound = new Howl({
+		volume: 0.1,
+		src: ['assets/sounds/Footstep.wav']
+	});
+
 	public get x() {
 		return this.container.x;
 	}
@@ -164,6 +169,8 @@ export class Player {
 		if(this.walkTiltTimer<=0) {
 			this.walkTiltTimer = this.walkTiltTime;	
 			this.tiltingRight = !this.tiltingRight;
+			this.footstepSound.rate(1 - Math.random() * 0.25);
+			this.footstepSound.play();
 		}
 
 		this.rotation = (isMoving) ?
@@ -207,6 +214,7 @@ export class Player {
 			case 'Hitting':
 				if (this.broomTimer === this.broomHitDelay) {
 					console.log("BANG");
+					this.broomHitSound.rate(1 + Math.random() * 0.2);
 					this.broomHitSound.play();
 				}
 
