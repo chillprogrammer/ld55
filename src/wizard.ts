@@ -151,7 +151,7 @@ export class Wizard {
         }
 
         if (!this.collidingWithTarget()) {
-            this.move(deltaTime);
+            this.move();
         }
 
         this.sprite.rotation = this.rotation;
@@ -172,9 +172,30 @@ export class Wizard {
         this.rotation += 0.001 * this.deltaTime * this.rotationDirection;
     }
 
-    move(deltaTime: number): void {
-        this.sprite.position.y -= deltaTime * this.wizardSpeed;
+    private moveTowardTarget(): void {
+        const spriteBounds = this.sprite.getBounds();
+        const targetBounds = this.targetObject.sprite.getBounds();
+        
+        if (spriteBounds.x > targetBounds.x + this.MIN_DISTANCE_TO_ATTACK) {
+            this.sprite.position.x -= this.deltaTime * this.wizardSpeed;
+            this.sprite.scale.x = -1;
+        }
+        else if (spriteBounds.x < targetBounds.x - this.MIN_DISTANCE_TO_ATTACK) {
+            this.sprite.position.x += this.deltaTime * this.wizardSpeed;
+            this.sprite.scale.x = 1;
+        }
+
+        if (spriteBounds.y > targetBounds.y + this.MIN_DISTANCE_TO_ATTACK) {
+            this.sprite.position.y -= this.deltaTime * this.wizardSpeed;
+        }
+        else if (spriteBounds.y < targetBounds.y - this.MIN_DISTANCE_TO_ATTACK) {
+            this.sprite.position.y += this.deltaTime * this.wizardSpeed;
+        }
+    }
+
+    move(): void {
         this.makeWizardSpin();
+        this.moveTowardTarget();
     }
 
 }
