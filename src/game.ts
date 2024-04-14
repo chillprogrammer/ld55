@@ -8,6 +8,7 @@ import { Player } from './player';
 import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
 import { ZIndexManager } from './managers/zIndex-manager';
+import { Trash } from './trash';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -168,6 +169,14 @@ export class Game {
 							alias: 'broom.png',
                             src: 'assets/sprites/broom.png',
 						},
+						{
+							alias: 'trash1.png',
+							src: 'assets/sprites/trash1.png',
+						},
+						{
+							alias: 'trash2.png',
+							src: 'assets/sprites/trash2.png',
+						},
                     ]
                 },
                 {
@@ -221,6 +230,7 @@ export class Game {
         Player.setGame(this);
         WizardSpawner.setGame(this);
         DestoryableObjects.setGame(this);
+		Trash.setGame(this);
     }
 
 
