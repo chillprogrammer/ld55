@@ -130,6 +130,16 @@ export class Wizard {
         this.targetObject = (<FountainDrink>_targetObject);
     }
 
+    collidingWithTarget(): boolean {
+        const spriteBounds = this.sprite.getBounds();
+        const targetBounds = this.targetObject.sprite.getBounds();
+
+        return spriteBounds.x < targetBounds.x + targetBounds.width
+            && spriteBounds.x + spriteBounds.width > targetBounds.x
+            && spriteBounds.y < targetBounds.y + targetBounds.height
+            && spriteBounds.y + spriteBounds.height > targetBounds.y;
+    }
+
     update(deltaTime: number) {
 
         // If sprite doesn't exist, then dont update anything
@@ -137,21 +147,9 @@ export class Wizard {
             return;
         }
 
-
-        const spriteBounds = this.sprite.getBounds();
-        const targetBounds = this.targetObject.sprite.getBounds();
-
-        if (
-            !(spriteBounds.x < targetBounds.x + targetBounds.width
-            && spriteBounds.x + spriteBounds.width > targetBounds.x
-            && spriteBounds.y < targetBounds.y + targetBounds.height
-            && spriteBounds.y + spriteBounds.height > targetBounds.y)
-        ) {
+        if (!this.collidingWithTarget()) {
             this.move(deltaTime);
         }
-
-
-
 
         this.sprite.rotation = this.rotation;
     }
