@@ -184,7 +184,7 @@ export class Wizard {
         if (!this.sprite || !this.targetObject || !(<any>this.targetObject).sprite) {
             return;
         }
-		this.move();
+		this.move(deltaTime);
 
         // Not Colliding
         //if (!this.collidingWithTarget()) {
@@ -246,27 +246,27 @@ export class Wizard {
         this.rotation += 0.001 * this.deltaTime * this.rotationDirection;
     }
 
-	private makeWizardSummon() {
-        if(!this.isAlive) {
-            return;
-        }
+	private summonTimer = 2000;
 
-        if (this.rotation > this.MAX_ROTATION_AMOUNT) {
-            this.rotation = this.MAX_ROTATION_AMOUNT;
-            this.rotationDirection = -0.5 + this.sprite.scale.x;
-        }
-        else if (this.rotation < -this.MAX_ROTATION_AMOUNT) {
-            this.rotation = -this.MAX_ROTATION_AMOUNT;
-            this.rotationDirection = 0.5 + this.sprite.scale.x;
-        }
+	private summonParticleDelay = 100;
+	private summonParticleTimer = this.summonParticleDelay;
 
-        this.rotation += 0.001 * this.deltaTime * this.rotationDirection;
+	private makeWizardSummon(deltaTime: number) {
+		this.rotation = Math.sin(this.summonTimer / 100) * 0.3;
+		this.summonTimer -= deltaTime;
+		this.summonParticleTimer -= deltaTime;
+
+		if (this.summonParticleTimer <= 0) {
+			WizardDust.throwFrom(this.sprite.x, this.sprite.y, 2, 80);
+			this.summonParticleTimer = this.summonParticleDelay;
+		}
+
+		if (this.summonTimer <= 0) this.attack(); 
     }
-
 
 	private state: 'TowardsTarget' | 'Summoning' = 'TowardsTarget';
 
-    move(): void {
+    move(deltaTime: number): void {
         if (!this.isAlive) {
             return;
         }
@@ -276,7 +276,7 @@ export class Wizard {
 				this.makeWizardSpin();
 			break;
 			case 'Summoning':
-				this.makeWizardSummon();
+				this.makeWizardSummon(deltaTime);
 			break;
 		}
     }
@@ -321,15 +321,21 @@ export class Wizard {
             return;
         }
 
-        Trash.throwFrom(this.sprite.x, this.sprite.y, 100);
+		this.canAttack = false;
+        Trash.throwFrom(this.sprite.x, this.sprite.y, 50, 100);
 
-        this.die();
+
+		setTimeout(()=>{this.die()}, 1000)
     }
 
+	private alreadyDied = false;
+
 	die(fromPlayer: boolean = false): void {
-		if (fromPlayer) {
-			WizardDust.throwFrom(this.sprite.x, this.sprite.y, 50);
-		}
+		if (this.alreadyDied) return;
+		//if (fromPlayer) {
+		WizardDust.throwFrom(this.sprite.x, this.sprite.y, 50);
+		this.alreadyDied = true;
+		//}
 
         this.canAttack = false;
         this.sprite.destroy();
