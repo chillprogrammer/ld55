@@ -264,6 +264,9 @@ export class Player {
 
 	private attackWizards() {
 		for(const wizard of WizardSpawner.wizardList) {
+			if(!wizard.sprite) {
+                continue;
+            }
 			if (colliding(wizard.sprite.getBounds(), this.container.getBounds())) {
 				wizard.die(true);
 			}

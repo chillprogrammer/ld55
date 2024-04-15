@@ -11,7 +11,7 @@ export class WizardSpawner {
     private spriteScale = 1;
     private player: Player = null;
     private spawnPosition: Point;
-    private spawnInterval: number = 2000;
+    private spawnInterval: number = 200;
     private spawnCounter: number = 0;
 
     public fountain: FountainDrink;
@@ -21,7 +21,6 @@ export class WizardSpawner {
         if (!WizardSpawner.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
         if (!WizardSpawner.mainContainer) throw "Need to define mainContainer before creating new player";
 
-        this.spawnPosition = new Point(WizardSpawner.game.INITIAL_WIDTH / 2, WizardSpawner.game.INITIAL_HEIGHT);
         Ticker.shared.add(this.update.bind(this));
     }
 
@@ -41,12 +40,12 @@ export class WizardSpawner {
         for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
             const wizard = WizardSpawner.wizardList[i];
 
-            if(!wizard.sprite) {
+            if (!wizard.sprite) {
                 WizardSpawner.wizardList.splice(i, 1);
                 i--;
                 return;
             }
-            
+
             if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
                 wizard.sprite.destroy();
                 WizardSpawner.wizardList.splice(i, 1);
@@ -107,12 +106,15 @@ export class WizardSpawner {
                 break;
         }
 
+        this.spawnPosition = new Point(Math.floor(Math.random() * WizardSpawner.game.INITIAL_WIDTH), WizardSpawner.game.INITIAL_HEIGHT);
 
 
         wizard.sprite.scale.set(this.spriteScale, this.spriteScale);
         wizard.sprite.anchor.set(0.5, 0.5);
         WizardSpawner.mainContainer.addChild(wizard.sprite);
+        
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
+
         WizardSpawner.wizardList.push(wizard);
         console.log(WizardSpawner.wizardList);
         return wizard;
@@ -170,7 +172,7 @@ export class Wizard {
 
     update(deltaTime: number) {
 
-        if(!this.isAlive) {
+        if (!this.isAlive) {
             return;
         }
 
@@ -202,7 +204,7 @@ export class Wizard {
             this.attackCooldownFactor = this.attackCooldown;
         }
 
-        if(!this.isAlive) {
+        if (!this.isAlive) {
             return;
         }
         this.sprite.rotation = this.rotation;
@@ -227,7 +229,7 @@ export class Wizard {
 
 
     private makeWizardSpin() {
-        if(!this.isAlive) {
+        if (!this.isAlive) {
             return;
         }
 
@@ -244,7 +246,7 @@ export class Wizard {
     }
 
     private moveTowardTarget(): void {
-        if(!this.isAlive) {
+        if (!this.isAlive) {
             return;
         }
 
@@ -269,7 +271,7 @@ export class Wizard {
     }
 
     move(): void {
-        if(!this.isAlive) {
+        if (!this.isAlive) {
             return;
         }
         this.makeWizardSpin();
@@ -281,20 +283,20 @@ export class Wizard {
             return;
         }
 
-		Trash.throwFrom(this.sprite.x, this.sprite.y, 100);
-		
-		this.die();
+        Trash.throwFrom(this.sprite.x, this.sprite.y, 100);
+
+        this.die();
     }
 
-	die(fromPlayer: boolean = false): void {
-		if (fromPlayer) {
-			WizardDust.throwFrom(this.sprite.x, this.sprite.y, 100);
-		}
+    die(fromPlayer: boolean = false): void {
+        if (fromPlayer) {
+            WizardDust.throwFrom(this.sprite.x, this.sprite.y, 100);
+        }
 
-		this.canAttack = false;
+        this.canAttack = false;
         this.sprite.destroy();
         this.sprite = null;
         this.isAlive = false;
-	}
+    }
 
 }
