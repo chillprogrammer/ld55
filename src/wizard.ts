@@ -148,7 +148,7 @@ export class Wizard {
     private rotationDirection: number = 1;
     private MAX_ROTATION_AMOUNT: number = 0.08;
     private deltaTime: number;
-    private MIN_DISTANCE_TO_ATTACK: number = 15;
+    private MIN_DISTANCE_TO_ATTACK: number = 60;
 
     private attackCooldown: number = 2000;
     private attackCooldownFactor: number = this.attackCooldown;
@@ -180,16 +180,16 @@ export class Wizard {
         if (!this.sprite || !this.targetObject || !(<any>this.targetObject).sprite) {
             return;
         }
+		this.move();
 
         // Not Colliding
-        if (!this.collidingWithTarget()) {
-            this.move();
-        }
+        //if (!this.collidingWithTarget()) {
+        //}
 
         // Colliding
-        else {
-            this.attack();
-        }
+        //else {
+            //this.attack();
+        //}
 
         if (!this.canAttack) {
             this.attackCooldownFactor -= deltaTime;
@@ -225,7 +225,6 @@ export class Wizard {
 
     private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
 
-
     private makeWizardSpin() {
         if(!this.isAlive) {
             return;
@@ -243,38 +242,75 @@ export class Wizard {
         this.rotation += 0.001 * this.deltaTime * this.rotationDirection;
     }
 
-    private moveTowardTarget(): void {
+	private makeWizardSummon() {
         if(!this.isAlive) {
             return;
         }
 
-        const spriteBounds = this.sprite.getBounds();
-        const targetBounds = this.targetObject.sprite.getBounds();
-
-        if (spriteBounds.x > targetBounds.x + this.MIN_DISTANCE_TO_ATTACK) {
-            this.sprite.position.x -= this.deltaTime * this.wizardSpeed;
-            this.sprite.scale.x = -1;
+        if (this.rotation > this.MAX_ROTATION_AMOUNT) {
+            this.rotation = this.MAX_ROTATION_AMOUNT;
+            this.rotationDirection = -0.5 + this.sprite.scale.x;
         }
-        else if (spriteBounds.x < targetBounds.x - this.MIN_DISTANCE_TO_ATTACK) {
-            this.sprite.position.x += this.deltaTime * this.wizardSpeed;
-            this.sprite.scale.x = 1;
+        else if (this.rotation < -this.MAX_ROTATION_AMOUNT) {
+            this.rotation = -this.MAX_ROTATION_AMOUNT;
+            this.rotationDirection = 0.5 + this.sprite.scale.x;
         }
 
-        if (spriteBounds.y > targetBounds.y + this.MIN_DISTANCE_TO_ATTACK) {
-            this.sprite.position.y -= this.deltaTime * this.wizardSpeed;
-        }
-        else if (spriteBounds.y < targetBounds.y - this.MIN_DISTANCE_TO_ATTACK) {
-            this.sprite.position.y += this.deltaTime * this.wizardSpeed;
-        }
+        this.rotation += 0.001 * this.deltaTime * this.rotationDirection;
     }
+
+
+	private state: 'TowardsTarget' | 'Summoning' = 'TowardsTarget';
 
     move(): void {
         if(!this.isAlive) {
             return;
         }
-        this.makeWizardSpin();
-        this.moveTowardTarget();
+		switch(this.state) {
+			case 'TowardsTarget': 
+				this.moveTowardTarget();
+				this.makeWizardSpin();
+			break;
+			case 'Summoning':
+				this.makeWizardSummon();
+			break;
+		}
     }
+
+    private moveTowardTarget(): void {
+        /*if(!this.isAlive) {
+            return;
+        }*/
+
+        const spriteBounds = this.sprite.getBounds();
+        const targetBounds = this.targetObject.sprite.getBounds();
+
+        if (spriteBounds.x > targetBounds.x) {
+            this.sprite.position.x -= this.deltaTime * this.wizardSpeed;
+            this.sprite.scale.x = -1;
+        }
+        else if (spriteBounds.x < targetBounds.x) {
+            this.sprite.position.x += this.deltaTime * this.wizardSpeed;
+            this.sprite.scale.x = 1;
+        }
+
+        if (spriteBounds.y > targetBounds.y) {
+            this.sprite.position.y -= this.deltaTime * this.wizardSpeed;
+        }
+        else if (spriteBounds.y < targetBounds.y) {
+            this.sprite.position.y += this.deltaTime * this.wizardSpeed;
+        }
+	
+		const dx = spriteBounds.x - targetBounds.x;
+		const dy = spriteBounds.y - targetBounds.y;
+		const dist = Math.sqrt(dx ** 2 + dy ** 2);
+		if (dist < this.MIN_DISTANCE_TO_ATTACK) {
+			this.state = 'Summoning';
+			console.log("Summoning!");
+		}
+    }
+
+
 
     attack(): void {
         if (!this.canAttack) {
