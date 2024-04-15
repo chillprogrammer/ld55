@@ -107,7 +107,6 @@ export class WizardSpawner {
         WizardSpawner.mainContainer.addChild(wizard.sprite);
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
         this.wizardList.push(wizard);
-        console.log(this.wizardList);
         return wizard;
     }
 

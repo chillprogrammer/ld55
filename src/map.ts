@@ -35,7 +35,7 @@ export default function createMap(game: Game) {
 		texture: game.spritesheetAssets['floor.png'],
 		width: game.INITIAL_WIDTH,
 		height: game.INITIAL_HEIGHT,
-		zIndex: -10
+		zIndex: -100
 	});
 
 	const leftWallTop = new TilingSprite({
