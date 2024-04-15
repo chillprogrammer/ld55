@@ -151,6 +151,8 @@ export class Wizard {
     private MAX_ROTATION_AMOUNT: number = 0.08;
     private deltaTime: number;
     private MIN_DISTANCE_TO_ATTACK: number = 60;
+    
+    private PADDING_DISTANCE: number = 40;
 
     private attackCooldown: number = 2000;
     private attackCooldownFactor: number = this.attackCooldown;
@@ -280,26 +282,26 @@ export class Wizard {
     }
 
     private moveTowardTarget(): void {
-        if(!this.isAlive) {
+        /*if(!this.isAlive) {
             return;
-        }
+        }*/
 
         const spriteBounds = this.sprite.getBounds();
         const targetBounds = this.targetObject.sprite.getBounds();
 
-        if (spriteBounds.x > targetBounds.x) {
+        if (spriteBounds.x > targetBounds.x  + this.PADDING_DISTANCE) {
             this.sprite.position.x -= this.deltaTime * this.wizardSpeed;
             this.sprite.scale.x = -1;
         }
-        else if (spriteBounds.x < targetBounds.x) {
+        else if (spriteBounds.x < targetBounds.x  - this.PADDING_DISTANCE) {
             this.sprite.position.x += this.deltaTime * this.wizardSpeed;
             this.sprite.scale.x = 1;
         }
 
-        if (spriteBounds.y > targetBounds.y) {
+        if (spriteBounds.y > targetBounds.y  + this.PADDING_DISTANCE) {
             this.sprite.position.y -= this.deltaTime * this.wizardSpeed;
         }
-        else if (spriteBounds.y < targetBounds.y) {
+        else if (spriteBounds.y < targetBounds.y -  + this.PADDING_DISTANCE) {
             this.sprite.position.y += this.deltaTime * this.wizardSpeed;
         }
 	
