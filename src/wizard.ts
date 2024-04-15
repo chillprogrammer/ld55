@@ -36,18 +36,23 @@ export class WizardSpawner {
             this.createWizard();
         }
 
-        const playerYPos = this.player.y;
 
         for (let i = 0; i < this.wizardList.length; i++) {
             const wizard = this.wizardList[i];
 
-            wizard.update(deltaTime);
-
+            if(!wizard.sprite) {
+                this.wizardList.splice(i, 1);
+                i--;
+                return;
+            }
+            
             if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
                 wizard.sprite.destroy();
                 this.wizardList.splice(i, 1);
                 i--;
             }
+
+            wizard.update(deltaTime);
         }
 
     }
@@ -108,6 +113,7 @@ export class WizardSpawner {
         WizardSpawner.mainContainer.addChild(wizard.sprite);
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
         this.wizardList.push(wizard);
+        console.log(this.wizardList);
         return wizard;
     }
 
@@ -133,6 +139,7 @@ export class WizardSpawner {
 }
 
 export class Wizard {
+    public isAlive: boolean = true;
     public sprite: Sprite;
     public targetObject: FountainDrink | TrashCan | any;
     private rotation: number = 0;
@@ -141,6 +148,10 @@ export class Wizard {
     private MAX_ROTATION_AMOUNT: number = 0.08;
     private deltaTime: number;
     private MIN_DISTANCE_TO_ATTACK: number = 15;
+
+    private attackCooldown: number = 2000;
+    private attackCooldownFactor: number = this.attackCooldown;
+    private canAttack: boolean = true;
 
     constructor(_targetObject: object) {
         this.targetObject = (<any>_targetObject);
@@ -157,6 +168,11 @@ export class Wizard {
     }
 
     update(deltaTime: number) {
+
+        if(!this.isAlive) {
+            return;
+        }
+
         this.deltaTime = deltaTime;
 
         // If sprite doesn't exist, then dont update anything
@@ -164,10 +180,30 @@ export class Wizard {
             return;
         }
 
+        // Not Colliding
         if (!this.collidingWithTarget()) {
             this.move();
         }
 
+        // Colliding
+        else {
+            this.attack();
+        }
+
+        if (!this.canAttack) {
+            this.attackCooldownFactor -= deltaTime;
+
+            if (this.attackCooldownFactor <= 0) {
+                this.attackCooldownFactor = this.attackCooldown;
+                this.canAttack = true;
+            }
+        } else {
+            this.attackCooldownFactor = this.attackCooldown;
+        }
+
+        if(!this.isAlive) {
+            return;
+        }
         this.sprite.rotation = this.rotation;
     }
 
@@ -190,7 +226,9 @@ export class Wizard {
 
 
     private makeWizardSpin() {
-
+        if(!this.isAlive) {
+            return;
+        }
 
         if (this.rotation > this.MAX_ROTATION_AMOUNT) {
             this.rotation = this.MAX_ROTATION_AMOUNT;
@@ -205,6 +243,10 @@ export class Wizard {
     }
 
     private moveTowardTarget(): void {
+        if(!this.isAlive) {
+            return;
+        }
+
         const spriteBounds = this.sprite.getBounds();
         const targetBounds = this.targetObject.sprite.getBounds();
 
@@ -226,8 +268,23 @@ export class Wizard {
     }
 
     move(): void {
+        if(!this.isAlive) {
+            return;
+        }
         this.makeWizardSpin();
         this.moveTowardTarget();
+    }
+
+    attack(): void {
+        if (!this.canAttack) {
+            return;
+        }
+
+        this.canAttack = false;
+
+        this.sprite.destroy();
+        this.sprite = null;
+        this.isAlive = false;
     }
 
 }
