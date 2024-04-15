@@ -162,6 +162,12 @@ export class Player {
 		let dDist = Math.sqrt(dx ** 2 + dy ** 2);
 		if (dDist == 0) dDist = 1;
 
+		const oldX = this.x;
+		const oldY = this.y;
+
+		this.x += dx * this.SPEED * deltaMS / dDist;
+		this.y += dy * this.SPEED * deltaMS / dDist;
+
 
 
 		const movingLeft = (dx * this.SPEED * deltaMS / dDist) < 0 ? true : false;
@@ -171,17 +177,10 @@ export class Player {
 		const movingDown = (dy * this.SPEED * deltaMS / dDist) > 0 ? true : false;
 
 
-		this.x += dx * this.SPEED * deltaMS / dDist;
-		this.y += dy * this.SPEED * deltaMS / dDist;
-
 		for (let bound of this.collidables) {
 			if (colliding(this.container.getBounds(), bound)) {
-				if (movingRight || movingLeft) {
-					this.x -= dx * this.SPEED * deltaMS / dDist;
-				}
-				if (movingUp || movingDown) {
-					this.y -= dy * this.SPEED * deltaMS / dDist;
-				}
+				this.x = oldX;	
+				this.y = oldY;
 			}
 		}
 
@@ -199,6 +198,9 @@ export class Player {
 		if (this.x < 0 + this.sprite.width / 2) {
 			this.x = 0 + this.sprite.width / 2;
 		}
+
+
+
 
 
 		// ------------- player left-right ------------

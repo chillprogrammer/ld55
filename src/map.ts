@@ -23,7 +23,7 @@ export default function createMap(game: Game) {
 			}
 			game.mainContainer.addChild(sprite);
 
-			if (sprite !== floor) {
+			if (sprite !== floor && sprite !== billboard && sprite !== counter) {
 				collidables.push(sprite.getBounds());
 			}
 		}
@@ -34,7 +34,17 @@ export default function createMap(game: Game) {
 		width: TILE_SIZE * 5,
 		height: TILE_SIZE,
 		x: TILE_SIZE * 5,
-		y: TILE_SIZE * 2
+		y: TILE_SIZE * 2,
+	});
+
+	const counterCol = new TilingSprite({
+		texture: game.spritesheetAssets['counter.png'],
+		width: TILE_SIZE * 5,
+		height: TILE_SIZE * 0.4,
+		x: TILE_SIZE * 5,
+		y: TILE_SIZE * 2 + TILE_SIZE * 0.6,
+		alpha: 0,
+		zIndex: -55,
 	});
 
 	const floor = new TilingSprite({
@@ -81,7 +91,7 @@ export default function createMap(game: Game) {
 	});
 
 	createMapElements(
-		counter, floor, leftWallTop, leftWallBottom, rightWallTop, rightWallBottom, billboard
+		counter, floor, leftWallTop, leftWallBottom, rightWallTop, rightWallBottom, billboard, counterCol
 	);
 
 }
