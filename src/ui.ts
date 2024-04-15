@@ -11,6 +11,8 @@ export class GameUI {
 	private restartButton: Sprite = null;
 	private restartText: Text = null;
 
+	private shiftResultsText: Text;
+
 	constructor(game: Game) {
 		this.game = game;
 
@@ -53,6 +55,21 @@ export class GameUI {
 				}
 			}
 		});
+
+		this.shiftResultsText = new Text({
+			text: `Shift Results:`,
+			style: {
+				fontFamily: 'Wendysscript',
+				fontSize: 236,
+				fill: 0xffffff,
+				align: 'center',
+				stroke: {
+					color: 'black',
+					width: 32,
+				}
+			}
+		});
+
 
 		this.trashCounter.scale = 0.07;
 		this.trashCounter.zIndex = 10000;
@@ -98,18 +115,25 @@ export class GameUI {
 		this.restartText.scale = 0.07;
 		this.restartText.zIndex = 10000;
 
+		this.shiftResultsText.scale = 0.2;
+		this.shiftResultsText.zIndex = 10000;
+		this.shiftResultsText.x = game.INITIAL_WIDTH / 2 - this.shiftResultsText.width / 2;
+		this.shiftResultsText.y = game.INITIAL_HEIGHT / 2 - this.shiftResultsText.height / 2;
+		this.shiftResultsText.visible = false;
 
 		this.restartText.position.set(this.restartButton.position.x + this.restartButton.width / 2 - this.restartText.width / 2, this.restartButton.position.y + this.restartButton.height / this.restartText.height / 2);
-		
+
 		this.restartText.visible = false;
 		this.restartButton.visible = false;
 
 		this.game.mainContainer.addChild(this.restartText);
 		this.game.mainContainer.addChild(this.restartButton);
+		this.game.mainContainer.addChild(this.shiftResultsText);
 
 		this.restartButton.onclick = () => {
 			this.restartText.visible = false;
 			this.restartButton.visible = false;
+			this.shiftResultsText.visible = false;
 			this.game.restartGame();
 		}
 
@@ -138,5 +162,6 @@ export class GameUI {
 	public showStartNextShiftButton() {
 		this.restartText.visible = true;
 		this.restartButton.visible = true;
+		this.shiftResultsText.visible = true;
 	}
 }
