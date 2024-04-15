@@ -41,6 +41,10 @@ export default function titlescreen(game: Game): Promise<void> { return new Prom
 				dropShadow: {
 					blur: 32,
 					color: 0x000000,
+				},
+				stroke: {
+					color: 'black',
+					width: 32, 
 				}
 			}
 		});
@@ -59,6 +63,10 @@ export default function titlescreen(game: Game): Promise<void> { return new Prom
 				dropShadow: {
 					blur: 32,
 					color: 0x000000
+				},
+				stroke: {
+					color: 'black',
+					width: 32, 
 				}
 			}
 		});
