@@ -9,6 +9,7 @@ import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
 import { ZIndexManager } from './managers/zIndex-manager';
 import { Trash, WizardDust } from './trash';
+import { GameUI } from './ui';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -19,6 +20,7 @@ export class Game {
     private backgroundColor: number = 0x000000;
     public app: Application;
     public mainContainer: Container = null;
+	private gameUI: GameUI;
 	/*public get mainContainer() {
 		this.app.stage
 	}*/
@@ -74,6 +76,7 @@ export class Game {
         await titlescreen(this);
 
         createMap(this);
+		this.gameUI = new GameUI(this);
 
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.
@@ -196,6 +199,10 @@ export class Game {
 							alias: 'wizardDust.png',
 							src: 'assets/sprites/wizardDust.png',
 						},
+						{
+							alias: 'table.png',
+							src: 'assets/sprites/table.png',
+						},
                     ]
                 },
                 {
@@ -289,6 +296,9 @@ export class Game {
         window.dispatchEvent(new Event('resize'));
     }
 
+
+	private hasResized = false;
+
     /**
     * Callback function that runs when the window is resized.
     * Resizes the pixi.js canvas to maintain aspect ratio.
@@ -313,9 +323,15 @@ export class Game {
             calculatedHeight = Math.ceil(calculatedHeight);
 
             //This sets the game's dimensions to what we calculated.
-            this.app.renderer.resize(calculatedWidth, calculatedHeight);
-            const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
-            this.app.stage.scale.set(ratio);
+			if (!this.hasResized) {
+				this.app.renderer.resize(calculatedWidth, calculatedHeight);
+				const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
+				this.app.stage.scale.set(ratio);
+			}
+
+			this.app.canvas.style.width = `${calculatedWidth}px`;
+			this.app.canvas.style.height = `${calculatedHeight}px`;
+			this.hasResized = true;
         }
     }
 }
