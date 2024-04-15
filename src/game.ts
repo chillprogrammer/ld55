@@ -90,7 +90,7 @@ export class Game {
 
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaTime;
-		
+		Trash.updateAll(ticker);	
 		ZIndexManager.arrangeZIndicies();
 //		this.mainContainer.sortChildren()
 //		this.mainContainer.sortDirty = true;

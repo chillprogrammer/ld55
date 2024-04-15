@@ -5,8 +5,12 @@ export class ZIndexManager {
 	private static baseZIndex = 100;
 
 	public static arrangeZIndicies() {
+
 		for(let i = 0; i < ZIndexManager.instances.length; i++) {
-			if (!ZIndexManager.instances[i].getYPos()) {
+			if (!ZIndexManager.instances[i]) {
+				ZIndexManager.instances.splice(i, 1);
+				i--;
+			} else if (!ZIndexManager.instances[i].getYPos()) {
 				ZIndexManager.instances.splice(i, 1);
 				i--;
 				continue;

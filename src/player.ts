@@ -1,4 +1,4 @@
-import {Assets, Sprite, Application, Container, Ticker} from 'pixi.js';
+import {Assets, Sprite, Application, Container, Ticker, TickerCallback} from 'pixi.js';
 import {KeyManager} from './managers/key-manager';
 import {ZIndexManager} from './managers/zIndex-manager';
 import {Game} from './game';
@@ -99,6 +99,8 @@ export class Player {
 
 	private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
 	private facingRight: boolean = true;
+
+	private callback: TickerCallback<void>;
 
 	constructor() {
 		if (!Player.keyManager) throw "Need to define keyManager before creating new player";

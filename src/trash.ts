@@ -1,4 +1,4 @@
-import {Ticker, Texture, Sprite} from 'pixi.js'
+import {Ticker, Texture, Sprite, TickerCallback} from 'pixi.js'
 import {Game} from './game';
 import {ZIndexManager} from './managers/zIndex-manager';
 
@@ -9,6 +9,12 @@ export class Trash {
 	private static trashTextures: Texture[] = [];
 
 	public static instances: Trash[] = [];
+
+	public static updateAll(ticker: Ticker){
+		for(const trash of Trash.instances) {
+			trash.update(ticker);
+		}
+	}
 
 	public static setGame(game: Game) {
 		Trash.game = game;
@@ -43,10 +49,14 @@ export class Trash {
 	private xV: number;
 	private hV: number;
 
+	private health: number = 3;
+
 	private ticker: Ticker;
 	public sprite: Sprite;
+	public index: number;
 
 	private gravity: number = 400;
+	public callback: TickerCallback<void>;
 
 	constructor(x: number, y: number, h: number, xV: number, hV: number) {
 		if (!Trash.game) throw "Need to link game to trash class!";	
@@ -56,10 +66,14 @@ export class Trash {
 		this.h = h;
 		this.xV = xV;
 		this.hV = hV;
-		this.ticker = Ticker.shared.add(this.update.bind(this));
+//		this.ticker = Ticker.shared.add(this.update.bind(this));
 		this.sprite = Sprite.from(Trash.getRandomTexture());
 
 		this.sprite.zIndex = 1;
+
+		this.index = Trash.instances.length;
+
+		this.callback = this.update.bind(this);
 
 		Trash.game.mainContainer.addChild(this.sprite);
 		Trash.instances.push(this);
@@ -80,6 +94,8 @@ export class Trash {
 		this.sprite.position.set(
 			this.x, this.y - this.h
 		);
+
+		if (this.health <= 0) this.remove();
 	}
 
 	public sweep(isRight: boolean) {
@@ -88,19 +104,25 @@ export class Trash {
 
 		this.xV = (isRight) ? vel : -vel;
 		this.hV = vel / 1;
+		this.health--;
 	}
 
 	public remove() {
-		this.ticker.stop();	
+//		this.sprite.gar
+		for(let i = this.index + 1; i < Trash.instances.length; i++) {
+			Trash.instances[i].index--;
+		}
+		Trash.instances.splice(this.index, 1);
 	}
 
 	public getZIndexY() {
+		if (this.sprite === null) return 100000;
 		if (this.h > 0) return 100000;
-
 		return this.sprite.getBounds().bottom;
 	}
 
 	public setZIndex(value: number) {
+		if (!this.sprite) return;
 		this.sprite.zIndex = value;
 	}
 
