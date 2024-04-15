@@ -10,7 +10,7 @@ export class WizardSpawner {
     private spriteScale = 1;
     private player: Player = null;
     private spawnPosition: Point;
-    private spawnInterval: number = 2000;
+    private spawnInterval: number = 10000;
     private spawnCounter: number = 0;
 
     public fountain: FountainDrink;
@@ -36,7 +36,6 @@ export class WizardSpawner {
             this.createWizard();
         }
 
-        const playerYPos = this.player.y;
 
         for (let i = 0; i < this.wizardList.length; i++) {
             const wizard = this.wizardList[i];
@@ -143,6 +142,9 @@ export class Wizard {
     private deltaTime: number;
     private MIN_DISTANCE_TO_ATTACK: number = 15;
 
+    private attackCooldown: number = 5000;
+    private attackCooldownFactor: number = this.attackCooldown;
+
     constructor(_targetObject: object) {
         this.targetObject = (<any>_targetObject);
     }
@@ -165,8 +167,23 @@ export class Wizard {
             return;
         }
 
+        // Colliding
         if (!this.collidingWithTarget()) {
             this.move();
+            this.attackCooldownFactor = this.attackCooldown;
+
+        }
+
+        // Not colliding
+        else {
+            if (this.attackCooldownFactor > 0) {
+
+            }
+        }
+
+        //
+        if (this.attackCooldownFactor <= 0) {
+            this.attackCooldownFactor = 0;
         }
 
         this.sprite.rotation = this.rotation;
@@ -229,6 +246,10 @@ export class Wizard {
     move(): void {
         this.makeWizardSpin();
         this.moveTowardTarget();
+    }
+
+    attack(): void {
+
     }
 
 }
