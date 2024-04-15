@@ -288,10 +288,10 @@ export class Wizard {
         this.die();
     }
 
-    die(fromPlayer: boolean = false): void {
-        if (fromPlayer) {
-            WizardDust.throwFrom(this.sprite.x, this.sprite.y, 100);
-        }
+	die(fromPlayer: boolean = false): void {
+		if (fromPlayer) {
+			WizardDust.throwFrom(this.sprite.x, this.sprite.y, 50);
+		}
 
         this.canAttack = false;
         this.sprite.destroy();

@@ -91,12 +91,6 @@ export class Trash {
 		this.x += this.xV * ticker.deltaMS / 1000;	
 		this.h += this.hV * ticker.deltaMS / 1000;	
 
-		if (
-			this.x < 0 || this.x > Trash.game.INITIAL_WIDTH
-			) {
-		this.xV = -this.xV;
-		}
-
 
 
 		this.sprite.position.set(
@@ -106,6 +100,7 @@ export class Trash {
 		if (this.health <= 0) this.remove();
 
 		if (
+			this.x < 0 || this.x > Trash.game.INITIAL_WIDTH ||
 			this.y < 0 || this.y > Trash.game.INITIAL_HEIGHT
 		) {
 			this.remove();
@@ -219,6 +214,7 @@ export class WizardDust {
 
 		this.callback = this.update.bind(this);
 
+		this.sprite.alpha = this.health / this.initialHealth;
 
 		WizardDust.game.mainContainer.addChild(this.sprite);
 		WizardDust.instances.push(this);
@@ -234,11 +230,6 @@ export class WizardDust {
 		}
 
 		this.health -= ticker.deltaMS;
-//		this.sprite.alpha = this.health / this.initialHealth;
-		this.sprite.scale.set(this.health / this.initialHealth);
-
-		this.xV += (Math.random() - 0.5) * ticker.deltaMS;
-		this.hV += (Math.random() - 0.5)* ticker.deltaMS;
 
 		this.x += this.xV * ticker.deltaMS / 1000;	
 		this.h += this.hV * ticker.deltaMS / 1000;	
