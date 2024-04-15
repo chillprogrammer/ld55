@@ -59,7 +59,7 @@ export class GameUI {
 
 		this.trashCleanedCounter.scale = 0.07;
 		this.trashCleanedCounter.zIndex = 10000;
-		this.trashCleanedCounter.y = 20
+		this.trashCleanedCounter.y = 40
 
 		this.shiftClockRemainingCounter.scale = 0.07;
 		this.shiftClockRemainingCounter.zIndex = 10000;
@@ -79,7 +79,7 @@ export class GameUI {
 		this.restartButton = Sprite.from(Texture.WHITE);
 		this.restartButton.tint = 0xFF5555;
 		this.restartButton.setSize(this.game.INITIAL_WIDTH / 4, 30);
-		this.restartButton.position.set(this.game.INITIAL_WIDTH / 2 - this.restartButton.width + 35, this.game.INITIAL_HEIGHT / 1.3);
+		this.restartButton.position.set(this.game.INITIAL_WIDTH / 2 - this.restartButton.width / 2, this.game.INITIAL_HEIGHT / 1.3);
 		this.restartButton.interactive = true;
 
 		this.restartText = new Text({

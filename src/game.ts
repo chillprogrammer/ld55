@@ -26,8 +26,9 @@ export class Game {
     }*/
     public trashContainer: Container = null;
 
-    public shiftClockTimeRemaining: number = 12000; // 2 mins
     public shiftClockTimeRemaining_DEFAULT: number = 120000; // 2 mins
+    public shiftClockTimeRemaining: number = this.shiftClockTimeRemaining_DEFAULT;
+
 
     // Assets
     public spritesheetAssets: any;
