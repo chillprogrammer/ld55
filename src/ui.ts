@@ -1,6 +1,7 @@
 import { Sprite, Text, Texture, Ticker, type StrokeStyle } from 'pixi.js';
 import { Game } from './game';
 import { Trash } from './trash';
+import { WizardSpawner } from './wizard';
 
 export class GameUI {
 	private game: Game;
@@ -17,7 +18,7 @@ export class GameUI {
 		this.game = game;
 
 		this.trashCounter = new Text({
-			text: `Total Trash:`,
+			text: `Trash Left:`,
 			style: {
 				fontFamily: 'Wendysscript',
 				fontSize: 256,
@@ -60,9 +61,9 @@ export class GameUI {
 			text: `Shift Results:`,
 			style: {
 				fontFamily: 'Wendysscript',
-				fontSize: 236,
+				fontSize: 80,
 				fill: 0xffffff,
-				align: 'center',
+				align: 'left',
 				stroke: {
 					color: 'black',
 					width: 32,
@@ -83,7 +84,7 @@ export class GameUI {
 		this.shiftClockRemainingCounter.x = game.INITIAL_WIDTH / 2 + 145
 
 		Ticker.shared.add(() => {
-			this.trashCounter.text = `Total Trash: ${Trash.instances.length}`;
+			this.trashCounter.text = `Trash Left: ${Trash.instances.length}`;
 			this.trashCleanedCounter.text = `Cleaned: ${Trash.totalGenerated - Trash.instances.length}`;
 			this.shiftClockRemainingCounter.text = `Shift\nClock: ${this.msToClockTime(this.game.shiftClockTimeRemaining)}`;
 		});
@@ -96,7 +97,7 @@ export class GameUI {
 		this.restartButton = Sprite.from(Texture.WHITE);
 		this.restartButton.tint = 0xFF5555;
 		this.restartButton.setSize(this.game.INITIAL_WIDTH / 4, 30);
-		this.restartButton.position.set(this.game.INITIAL_WIDTH / 2 - this.restartButton.width / 2, this.game.INITIAL_HEIGHT / 1.3);
+		this.restartButton.position.set(this.game.INITIAL_WIDTH / 2 - this.restartButton.width / 2, this.game.INITIAL_HEIGHT / 1.3 + 10);
 		this.restartButton.interactive = true;
 
 		this.restartText = new Text({
@@ -117,8 +118,8 @@ export class GameUI {
 
 		this.shiftResultsText.scale = 0.2;
 		this.shiftResultsText.zIndex = 10000;
-		this.shiftResultsText.x = game.INITIAL_WIDTH / 2 - this.shiftResultsText.width / 2;
-		this.shiftResultsText.y = game.INITIAL_HEIGHT / 2 - this.shiftResultsText.height / 2;
+		this.shiftResultsText.x = game.INITIAL_WIDTH / 2 - 70;
+		this.shiftResultsText.y = game.INITIAL_HEIGHT / 2 - 90;
 		this.shiftResultsText.visible = false;
 
 		this.restartText.position.set(this.restartButton.position.x + this.restartButton.width / 2 - this.restartText.width / 2, this.restartButton.position.y + this.restartButton.height / this.restartText.height / 2);
@@ -163,5 +164,19 @@ export class GameUI {
 		this.restartText.visible = true;
 		this.restartButton.visible = true;
 		this.shiftResultsText.visible = true;
+
+		const totalTrash = Trash.instances.length;
+		const trashGenerated = Trash.totalGenerated;
+		const trashCleaned = Trash.totalGenerated - Trash.instances.length;
+		let percentageCleaned: number = Math.floor((trashCleaned / trashGenerated) * 100);
+		if (!percentageCleaned) {
+			percentageCleaned = 0;
+		}
+
+		const totalWizardsSpawned = WizardSpawner.totalWizardsSpawned;
+		const shiftLength = this.msToClockTime(this.game.shiftClockTimeRemaining_DEFAULT);
+		this.shiftResultsText.text = `Shift Results:\nTrash Summoned: ${trashGenerated}\nTrash Cleaned: ${trashCleaned}\nPercentage Cleaned: ${percentageCleaned}%\nShift Length: ${shiftLength}\n${totalWizardsSpawned} wizards entered the store`
+
+
 	}
 }

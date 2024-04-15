@@ -26,7 +26,7 @@ export class Game {
     }*/
     public trashContainer: Container = null;
 
-    public shiftClockTimeRemaining_DEFAULT: number = 200; // 2 mins
+    public shiftClockTimeRemaining_DEFAULT: number = 120000; // 2 mins
     public shiftClockTimeRemaining: number = this.shiftClockTimeRemaining_DEFAULT;
 
 
@@ -101,6 +101,7 @@ export class Game {
 
     public restartGame() {
         Trash.removeAll();
+        Trash.totalGenerated = 0;
         WizardDust.removeAll();
 
         this.shiftClockTimeRemaining = this.shiftClockTimeRemaining_DEFAULT;
@@ -114,6 +115,7 @@ export class Game {
         this.wizardSpawner.fountain = this.destoryableObjects.getFountain();
         this.wizardSpawner.trashCans = this.destoryableObjects.getTrashcans();
         this.wizardSpawner.setPlayer(this.player);
+        WizardSpawner.totalWizardsSpawned = 0;
         //this.wizardSpawner.createWizard();
     }
 

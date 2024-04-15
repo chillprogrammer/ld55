@@ -14,6 +14,7 @@ export class WizardSpawner {
     private spawnPosition: Point;
     private spawnInterval: number = 1300;
     private spawnCounter: number = 0;
+    public static totalWizardsSpawned: number = 0;
 
 
 
@@ -137,6 +138,7 @@ export class WizardSpawner {
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
 
         WizardSpawner.wizardList.push(wizard);
+        WizardSpawner.totalWizardsSpawned++;
         return wizard;
     }
 
