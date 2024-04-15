@@ -20,6 +20,8 @@ export class WizardSpawner {
     public fountain: FountainDrink;
     public trashCans: TrashCan[];
 
+    private gameOver: boolean = false;
+
     constructor() {
         if (!WizardSpawner.spritesheetAssets) throw "Need to define spritesheetAssets before creating new player";
         if (!WizardSpawner.mainContainer) throw "Need to define mainContainer before creating new player";
@@ -31,13 +33,15 @@ export class WizardSpawner {
     public cleanUp() {
         for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
             const wizard = WizardSpawner.wizardList[i];
-            if (wizard && wizard.sprite) {
-                wizard.isAlive = false;
-                wizard.sprite.destroy();
-                WizardSpawner.mainContainer.removeChild(wizard.sprite);
+            if (wizard) {
+                wizard.die();
             }
         }
-        WizardSpawner.wizardList = [];
+    }
+
+    end() {
+        this.gameOver = true;
+        this.cleanUp();
     }
 
     public destroy() {
@@ -54,40 +58,35 @@ export class WizardSpawner {
     }
 
     private update(ticker: Ticker) {
-        try {
+        const deltaTime = ticker.deltaMS;
+        this.spawnCounter += deltaTime;
 
 
-            const deltaTime = ticker.deltaMS;
-            this.spawnCounter += deltaTime;
+        if (this.spawnCounter > this.spawnInterval) {
+            this.spawnCounter = 0;
 
-
-            if (this.spawnCounter > this.spawnInterval) {
-                this.spawnCounter = 0;
-
+            if (!this.gameOver) {
                 this.createWizard();
             }
+        }
 
 
-            for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
-                const wizard = WizardSpawner.wizardList[i];
+        for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
+            const wizard = WizardSpawner.wizardList[i];
 
-                if (!wizard.sprite || !wizard.sprite.position) {
-                    WizardSpawner.wizardList.splice(i, 1);
-                    i--;
-                    return;
-                }
-
-                if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
-                    wizard.sprite.destroy();
-                    WizardSpawner.wizardList.splice(i, 1);
-                    i--;
-                }
-
-                wizard.update(deltaTime);
+            if (!wizard.sprite || !wizard.sprite.position) {
+                WizardSpawner.wizardList.splice(i, 1);
+                i--;
+                return;
             }
 
-        } catch (e) {
-            console.error(e);
+            if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
+                wizard.sprite.destroy();
+                WizardSpawner.wizardList.splice(i, 1);
+                i--;
+            }
+
+            wizard.update(deltaTime);
         }
 
     }
@@ -394,7 +393,7 @@ export class Wizard {
 
 
     attack(deltaTime: number): void {
-        if (!this.canAttack || !this.isAlive) {
+        if (!this.canAttack) {
             return;
         }
 
@@ -413,7 +412,6 @@ export class Wizard {
     private alreadyDied = false;
 
     die(fromPlayer: boolean = false): void {
-        this.isAlive = false;
         if (this.alreadyDied) return;
 
         if (fromPlayer) {

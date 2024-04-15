@@ -1,6 +1,6 @@
-import {Text, Ticker, type StrokeStyle} from 'pixi.js';
-import {Game} from './game';
-import {Trash} from './trash';
+import { Text, Ticker, type StrokeStyle } from 'pixi.js';
+import { Game } from './game';
+import { Trash } from './trash';
 
 export class GameUI {
 	private game: Game;
@@ -20,7 +20,7 @@ export class GameUI {
 				align: 'center',
 				stroke: {
 					color: 'black',
-					width: 32, 
+					width: 32,
 				}
 			}
 		});
@@ -33,7 +33,7 @@ export class GameUI {
 				align: 'center',
 				stroke: {
 					color: 'black',
-					width: 32, 
+					width: 32,
 				}
 			}
 		});
@@ -46,7 +46,7 @@ export class GameUI {
 				align: 'left',
 				stroke: {
 					color: 'black',
-					width: 32, 
+					width: 32,
 				}
 			}
 		});
@@ -60,9 +60,9 @@ export class GameUI {
 
 		this.shiftClockRemainingCounter.scale = 0.07;
 		this.shiftClockRemainingCounter.zIndex = 10000;
-		this.shiftClockRemainingCounter.x = game.INITIAL_WIDTH/2 + 145
+		this.shiftClockRemainingCounter.x = game.INITIAL_WIDTH / 2 + 145
 
-		Ticker.shared.add(()=>{
+		Ticker.shared.add(() => {
 			this.trashCounter.text = `Total Trash: ${Trash.instances.length}`;
 			this.trashCleanedCounter.text = `Cleaned: ${Trash.totalGenerated - Trash.instances.length}`;
 			this.shiftClockRemainingCounter.text = `Shift\nClock: ${this.msToClockTime(this.game.shiftClockTimeRemaining)}`;
@@ -81,6 +81,6 @@ export class GameUI {
 		seconds = Math.floor((valInMS / 1000) % 60);
 
 
-		return `${mins}:${seconds}`;
+		return `${mins !== 0 ? mins : '00'}:${seconds !== 0 ? seconds : '00'}`;
 	}
 }

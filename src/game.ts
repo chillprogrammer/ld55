@@ -26,7 +26,7 @@ export class Game {
     }*/
     public trashContainer: Container = null;
 
-    public shiftClockTimeRemaining: number = 10000; // 2 mins
+    public shiftClockTimeRemaining: number = 20000; // 2 mins
 
     // Assets
     public spritesheetAssets: any;
@@ -84,14 +84,14 @@ export class Game {
         //this.destoryableObjects.destroy();
         //this.destoryableObjects = null;
 
-        this.player.destroy();
-        this.player = null;
+        //this.player.destroy();
+        //this.player = null;
 
-        this.wizardSpawner.destroy();
-        this.wizardSpawner = null;
+        this.wizardSpawner.end();
+        //this.wizardSpawner = null;
 
-        Trash.removeAll();
-        WizardDust.removeAll();
+        //Trash.removeAll();
+        //WizardDust.removeAll();
     }
 
 
@@ -133,10 +133,6 @@ export class Game {
     }
 
     private update(ticker: Ticker) {
-       
-        if(this.gameOver) {
-            return;
-        }
 
         const deltaTime = ticker.deltaMS;
         Trash.updateAll(ticker);
@@ -146,10 +142,12 @@ export class Game {
         //		this.mainContainer.sortChildren()
         //		this.mainContainer.sortDirty = true;
 
-        this.shiftClockTimeRemaining -= deltaTime;
+        if (!this.gameOver) {
+            this.shiftClockTimeRemaining -= deltaTime;
+        }
 
         if (this.shiftClockTimeRemaining <= 0) {
-            this.shiftClockTimeRemaining = 0;
+            this.shiftClockTimeRemaining = 120000;
             this.endGame();
         }
     }
