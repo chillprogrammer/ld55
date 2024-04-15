@@ -77,6 +77,12 @@ export class Game {
 
         await titlescreen(this);
 
+        this.startGame();
+    }
+
+
+    private startGame() {
+        
         createMap(this);
 		this.gameUI = new GameUI(this);
 
@@ -100,6 +106,7 @@ export class Game {
         this.wizardSpawner.setPlayer(this.player);
         this.wizardSpawner.createWizard();
     }
+
 
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaMS;
