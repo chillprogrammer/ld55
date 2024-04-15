@@ -178,7 +178,10 @@ export class Player {
 
 
 		for (let bound of this.collidables) {
-			if (colliding(this.container.getBounds(), bound)) {
+			const bounds = this.container.getBounds();
+			const xPadding = 20;
+			const newBounds = new Bounds(bounds.minX + xPadding, bounds.minY + this.sprite.height * 2, bounds.maxX - xPadding, bounds.maxY)
+			if (colliding(newBounds, bound)) {
 				this.x = oldX;	
 				this.y = oldY;
 			}
