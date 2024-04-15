@@ -281,6 +281,7 @@ export class Game {
         window.dispatchEvent(new Event('resize'));
     }
 
+
     /**
     * Callback function that runs when the window is resized.
     * Resizes the pixi.js canvas to maintain aspect ratio.

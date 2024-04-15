@@ -49,7 +49,8 @@ export class Trash {
 	private xV: number;
 	private hV: number;
 
-	private health: number = 3;
+	private startingHealth: number = 3;
+	private health: number = this.startingHealth;
 
 	private ticker: Ticker;
 	public sprite: Sprite;
@@ -88,6 +89,7 @@ export class Trash {
 			this.xV = 0;
 		}
 
+		this.sprite.scale.set(this.health / this.startingHealth);
 		this.x += this.xV * ticker.deltaMS / 1000;	
 		this.h += this.hV * ticker.deltaMS / 1000;	
 
