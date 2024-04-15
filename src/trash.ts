@@ -26,7 +26,6 @@ export class Trash {
 				trash.sprite?.destroy();
 				trash.sprite = null;
 			}
-			console.log(Trash.instances)
 		}
 		Trash.instances = [];
 	}
