@@ -26,7 +26,7 @@ export class Game {
     }*/
     public trashContainer: Container = null;
 
-    public shiftClockTimeRemaining: number = 20000; // 2 mins
+    public shiftClockTimeRemaining: number = 200; // 2 mins
 
     // Assets
     public spritesheetAssets: any;
@@ -84,7 +84,7 @@ export class Game {
         //this.destoryableObjects.destroy();
         //this.destoryableObjects = null;
 
-        //this.player.destroy();
+        this.player.setVisible(false);
         //this.player = null;
 
         this.wizardSpawner.end();
@@ -92,10 +92,12 @@ export class Game {
 
         //Trash.removeAll();
         //WizardDust.removeAll();
+
+        this.gameUI.showStartNextShiftButton();
     }
 
 
-    private restartGame() {
+    public restartGame() {
         this.gameOver = false;
         Ticker.shared.start();
 
@@ -146,8 +148,8 @@ export class Game {
             this.shiftClockTimeRemaining -= deltaTime;
         }
 
-        if (this.shiftClockTimeRemaining <= 0) {
-            this.shiftClockTimeRemaining = 120000;
+        if (this.shiftClockTimeRemaining < 0) {
+            this.shiftClockTimeRemaining = 0;
             this.endGame();
         }
     }

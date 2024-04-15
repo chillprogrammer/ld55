@@ -133,6 +133,10 @@ export class Player {
         Ticker.shared.remove(this.update, this);
     }
 
+	public setVisible(value: boolean) {
+        this.container.visible = value;
+    }
+
 
 	setCollidables(values: Bounds[]): void {
 		this.collidables = values
@@ -145,6 +149,10 @@ export class Player {
 	private walkTiltTimer = this.walkTiltTime;
 
 	private update(ticker: Ticker) {
+		if(!this.container?.visible) {
+			return;
+		}
+
 		this.movement(ticker);
 		this.broomLogic(ticker);
 	}
