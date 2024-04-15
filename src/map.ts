@@ -6,6 +6,8 @@ import { ZIndexManager } from './managers/zIndex-manager';
 const TILE_SIZE = 32;
 
 export const collidables: Bounds[] = [];
+export const mapSpriteList: TilingSprite[] | TilingSprite[] | any = []
+
 
 export default function createMap(game: Game) {
 
@@ -21,6 +23,7 @@ export default function createMap(game: Game) {
 					}
 				);
 			}
+			mapSpriteList.push(sprite);
 			game.mainContainer.addChild(sprite);
 
 			if (

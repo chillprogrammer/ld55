@@ -42,7 +42,12 @@ export class DestoryableObjects {
             }
         }
 
-        Ticker.shared.add(this.update.bind(this));
+        Ticker.shared.add(this.update, this);
+    }
+
+
+    public destroy() {
+        Ticker.shared.remove(this.update, this);
     }
 
     public static game: Game | undefined;

@@ -3,7 +3,7 @@ import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
 import { KeyManager } from './managers/key-manager';
 import titlescreen from './titlescreen';
-import createMap, { collidables } from './map';
+import createMap, { collidables, mapSpriteList } from './map';
 import { Player } from './player';
 import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
@@ -14,19 +14,19 @@ import { GameUI } from './ui';
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
 export class Game {
-
+    public gameOver: boolean = false;
     public INITIAL_WIDTH = 480;
     public INITIAL_HEIGHT = 270;
     private backgroundColor: number = 0x000000;
     public app: Application;
     public mainContainer: Container = null;
-	private gameUI: GameUI;
-	/*public get mainContainer() {
-		this.app.stage
-	}*/
-	public trashContainer: Container = null;
+    private gameUI: GameUI;
+    /*public get mainContainer() {
+        this.app.stage
+    }*/
+    public trashContainer: Container = null;
 
-    public shiftClockTimeRemaining: number = 30000; // 2 mins
+    public shiftClockTimeRemaining: number = 10000; // 2 mins
 
     // Assets
     public spritesheetAssets: any;
@@ -36,17 +36,16 @@ export class Game {
 
 
     // Managers
-    public mapManager: MapManager = null;
     public keyManager: KeyManager = null;
     private player: Player = null;
     public wizardSpawner: WizardSpawner = null;
     public destoryableObjects: DestoryableObjects = null;
 
     private music = new Howl({
-		volume: 0.25,
-		src: ['assets/sounds/Wizards12.wav'],
+        volume: 0.25,
+        src: ['assets/sounds/Wizards12.wav'],
         loop: true
-	});
+    });
 
     constructor() {
         this.init();
@@ -61,17 +60,14 @@ export class Game {
         this.music.play();
 
         this.mainContainer = new Container();
-		this.mainContainer.zIndex = 0;
-		this.mainContainer.sortableChildren = true;
+        this.mainContainer.zIndex = 0;
+        this.mainContainer.sortableChildren = true;
 
         // Changing the position of the main container to center all positions around centerpoint of canvas
         // this.mainContainer.position.set(this.INITIAL_WIDTH / 2, this.INITIAL_HEIGHT / 2);
         this.app.stage.addChild(this.mainContainer);
         await this.loadAssets();
-        this.mapManager = new MapManager(this.mainContainer);
         this.keyManager = new KeyManager();
-        await this.mapManager.init();
-        this.mapManager.loadMap(1);
 
         this.linkGlobalsToClasses();
 
@@ -80,19 +76,33 @@ export class Game {
         this.startGame();
     }
 
+    private async endGame() {
+        this.gameOver = true;
+
+        //Ticker.shared.remove(this.update, this);
+
+        //this.destoryableObjects.destroy();
+        //this.destoryableObjects = null;
+
+        //this.player.destroy();
+        //this.player = null;
+
+        this.wizardSpawner.destroy();
+        this.wizardSpawner = null;
+    }
+
 
     private startGame() {
-        
-        createMap(this);
-		this.gameUI = new GameUI(this);
 
-        const ticker = Ticker.shared;
+        createMap(this);
+        this.gameUI = new GameUI(this);
+
         // Set this to prevent starting this ticker when listeners are added.
         // By default this is true only for the Ticker.shared instance.
-        ticker.autoStart = false;
+        Ticker.shared.autoStart = false;
 
-        ticker.add(this.update.bind(this));
-        ticker.start();
+        Ticker.shared.add(this.update, this);
+        Ticker.shared.start();
 
         this.destoryableObjects = new DestoryableObjects();
 
@@ -107,16 +117,26 @@ export class Game {
         this.wizardSpawner.createWizard();
     }
 
-
     private update(ticker: Ticker) {
+        ZIndexManager.arrangeZIndicies();
+        
+        if(this.gameOver) {
+            return;
+        }
+
         const deltaTime = ticker.deltaMS;
-		Trash.updateAll(ticker);	
-		WizardDust.updateAll(ticker);	
-		ZIndexManager.arrangeZIndicies();
-//		this.mainContainer.sortChildren()
-//		this.mainContainer.sortDirty = true;
+        Trash.updateAll(ticker);
+        WizardDust.updateAll(ticker);
+
+        //		this.mainContainer.sortChildren()
+        //		this.mainContainer.sortDirty = true;
 
         this.shiftClockTimeRemaining -= deltaTime;
+
+        if (this.shiftClockTimeRemaining <= 0) {
+            this.shiftClockTimeRemaining = 0;
+            this.endGame();
+        }
     }
 
 
@@ -182,38 +202,38 @@ export class Game {
                             alias: 'trashcan_destroyed.png',
                             src: 'assets/sprites/trashcan_destroyed.png'
                         },
-						{
-							alias: 'wall.png',
+                        {
+                            alias: 'wall.png',
                             src: 'assets/sprites/wall.png',
-						},
-						{
-							alias: 'wallBaseboard.png',
+                        },
+                        {
+                            alias: 'wallBaseboard.png',
                             src: 'assets/sprites/wallBaseboard.png',
-						},
-						{
-							alias: 'billboard.png',
+                        },
+                        {
+                            alias: 'billboard.png',
                             src: 'assets/sprites/billboard.png',
-						},
-						{
-							alias: 'broom.png',
+                        },
+                        {
+                            alias: 'broom.png',
                             src: 'assets/sprites/broom.png',
-						},
-						{
-							alias: 'trash1.png',
-							src: 'assets/sprites/trash1.png',
-						},
-						{
-							alias: 'trash2.png',
-							src: 'assets/sprites/trash2.png',
-						},
-						{
-							alias: 'wizardDust.png',
-							src: 'assets/sprites/wizardDust.png',
-						},
-						{
-							alias: 'table.png',
-							src: 'assets/sprites/table.png',
-						},
+                        },
+                        {
+                            alias: 'trash1.png',
+                            src: 'assets/sprites/trash1.png',
+                        },
+                        {
+                            alias: 'trash2.png',
+                            src: 'assets/sprites/trash2.png',
+                        },
+                        {
+                            alias: 'wizardDust.png',
+                            src: 'assets/sprites/wizardDust.png',
+                        },
+                        {
+                            alias: 'table.png',
+                            src: 'assets/sprites/table.png',
+                        },
                     ]
                 },
                 {
@@ -267,8 +287,8 @@ export class Game {
         Player.setGame(this);
         WizardSpawner.setGame(this);
         DestoryableObjects.setGame(this);
-		Trash.setGame(this);
-		WizardDust.setGame(this);
+        Trash.setGame(this);
+        WizardDust.setGame(this);
     }
 
 
@@ -295,11 +315,11 @@ export class Game {
         document.body.appendChild(<any>this.app.canvas);
 
         this.app.canvas.style.imageRendering = 'pixelated'
-		this.app.canvas.oncontextmenu = (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			return false;
-		}
+        this.app.canvas.oncontextmenu = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
 
         window.onresize = this.onResizeCallback.bind(this);
 
@@ -308,7 +328,7 @@ export class Game {
     }
 
 
-	private hasResized = false;
+    private hasResized = false;
 
     /**
     * Callback function that runs when the window is resized.
@@ -334,15 +354,15 @@ export class Game {
             calculatedHeight = Math.ceil(calculatedHeight);
 
             //This sets the game's dimensions to what we calculated.
-			if (!this.hasResized) {
-				this.app.renderer.resize(calculatedWidth, calculatedHeight);
-				const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
-				this.app.stage.scale.set(ratio);
-			}
+            if (!this.hasResized) {
+                this.app.renderer.resize(calculatedWidth, calculatedHeight);
+                const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
+                this.app.stage.scale.set(ratio);
+            }
 
-			this.app.canvas.style.width = `${calculatedWidth}px`;
-			this.app.canvas.style.height = `${calculatedHeight}px`;
-			this.hasResized = true;
+            this.app.canvas.style.width = `${calculatedWidth}px`;
+            this.app.canvas.style.height = `${calculatedHeight}px`;
+            this.hasResized = true;
         }
     }
 }

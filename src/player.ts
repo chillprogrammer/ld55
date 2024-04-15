@@ -126,9 +126,13 @@ export class Player {
 
 		Player.mainContainer.addChild(this.container);
 
-		Ticker.shared.add(this.update.bind(this));
-
+		Ticker.shared.add(this.update, this);
 	}
+
+	public destroy() {
+        Ticker.shared.remove(this.update, this);
+    }
+
 
 	setCollidables(values: Bounds[]): void {
 		this.collidables = values
