@@ -3,6 +3,8 @@ import {KeyManager} from './managers/key-manager';
 import {ZIndexManager} from './managers/zIndex-manager';
 import {Game} from './game';
 import {Howl} from 'howler'
+import {Trash} from './trash';
+import {colliding} from './utils';
 
 /** The main player class for the game */
 export class Player {
@@ -86,7 +88,7 @@ export class Player {
 	// ---------------------- Z Index Manager ------------------------
 
 	public getZIndexY() {
-		return this.container.getBounds().bottom;
+		return this.sprite.getBounds().bottom;
 //		return this.y + this.container.height / 2;
 }
 
@@ -96,6 +98,7 @@ export class Player {
 	}
 
 	private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
+	private facingRight: boolean = true;
 
 	constructor() {
 		if (!Player.keyManager) throw "Need to define keyManager before creating new player";
@@ -132,6 +135,7 @@ export class Player {
 		this.broomLogic(ticker);
 	}
 
+	
 
 	private movement(ticker: Ticker) {
 		const {deltaMS} = ticker;
@@ -154,10 +158,14 @@ export class Player {
 
 		// ------------- player left-right ------------
 
-		if (dx > 0)
+		if (dx > 0) {
 			this.container.scale.set(this.spriteScale, this.spriteScale);
-		if (dx < 0)
+			this.facingRight = true;
+		}
+		if (dx < 0) {
 			this.container.scale.set(-this.spriteScale, this.spriteScale);
+			this.facingRight = false;
+		}
 
 		// ------------- player tilt ------------------
 		
@@ -192,10 +200,12 @@ export class Player {
 				if (Player.keyManager.isKeyPressed('mouse0')) {
 					this.broomState = 'Prehit';	
 					this.broomReadySound.play();
+					Trash.throwFrom(this.x, this.y, 100, 100);
 				}
 				if(Player.keyManager.isKeyPressed('mouse2')) {
 					this.broomState = 'Sweeping';
 					this.broomSweepSound.play();
+					this.sweepTrash();
 				}
 				this.broom.anchor.set(0.5, 0.5);
 				this.broom.position.set(0, 5);
@@ -213,7 +223,6 @@ export class Player {
 			break;
 			case 'Hitting':
 				if (this.broomTimer === this.broomHitDelay) {
-					console.log("BANG");
 					this.broomHitSound.rate(1 + Math.random() * 0.2);
 					this.broomHitSound.play();
 				}
@@ -242,6 +251,13 @@ export class Player {
 		}
 	}
 
-}
+	private sweepTrash() {
+		for(const trash of Trash.instances) {
+			if (colliding(trash.sprite.getBounds(), this.container.getBounds())) {
+				trash.sweep(this.facingRight);
+			}
+		}
+	}
 
+}
 

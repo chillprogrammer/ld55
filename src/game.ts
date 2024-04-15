@@ -19,6 +19,10 @@ export class Game {
     private backgroundColor: number = 0x000000;
     public app: Application;
     public mainContainer: Container = null;
+	/*public get mainContainer() {
+		this.app.stage
+	}*/
+	public trashContainer: Container = null;
 
     // Assets
     public spritesheetAssets: any;
@@ -45,6 +49,7 @@ export class Game {
         await this.initializePixiJs();
 
         this.mainContainer = new Container();
+		this.mainContainer.zIndex = 0;
 		this.mainContainer.sortableChildren = true;
 
         // Changing the position of the main container to center all positions around centerpoint of canvas
@@ -87,8 +92,8 @@ export class Game {
         const deltaTime = ticker.deltaTime;
 		
 		ZIndexManager.arrangeZIndicies();
-		this.mainContainer.sortChildren()
-		this.mainContainer.sortDirty = true;
+//		this.mainContainer.sortChildren()
+//		this.mainContainer.sortDirty = true;
     }
 
 
