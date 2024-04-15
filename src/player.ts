@@ -1,11 +1,11 @@
-import {Assets, Sprite, Application, Container, Ticker, TickerCallback} from 'pixi.js';
-import {KeyManager} from './managers/key-manager';
-import {ZIndexManager} from './managers/zIndex-manager';
-import {Game} from './game';
-import {Howl} from 'howler'
-import {Trash} from './trash';
-import {colliding} from './utils';
-import {WizardSpawner} from './wizard';
+import { Assets, Sprite, Application, Container, Ticker, TickerCallback, Bounds } from 'pixi.js';
+import { KeyManager } from './managers/key-manager';
+import { ZIndexManager } from './managers/zIndex-manager';
+import { Game } from './game';
+import { Howl } from 'howler'
+import { Trash } from './trash';
+import { colliding } from './utils';
+import { WizardSpawner } from './wizard';
 
 /** The main player class for the game */
 export class Player {
@@ -14,9 +14,11 @@ export class Player {
 
 	private SPEED = 0.1;
 
+	private collidables: Bounds[] = [];
+
 	// ---------------------------- GLOBALS ------------------------------
-	
-	private static game: Game | undefined;	
+
+	private static game: Game | undefined;
 	public static setGame(game: Game) {
 		Player.game = game;
 	}
@@ -33,7 +35,7 @@ export class Player {
 
 	public static get mainContainer() {
 		return Player.game.mainContainer;
-	}	
+	}
 
 	// -------------------------------------------------------------------
 
@@ -90,12 +92,12 @@ export class Player {
 
 	public getZIndexY() {
 		return this.sprite.getBounds().bottom;
-//		return this.y + this.container.height / 2;
-}
+		//		return this.y + this.container.height / 2;
+	}
 
 	public setZIndex(value: number) {
 		this.container.zIndex = value;
-//		this.container.zIndex = value;
+		//		this.container.zIndex = value;
 	}
 
 	private zIndexManager = new ZIndexManager(this.getZIndexY.bind(this), this.setZIndex.bind(this));
@@ -127,6 +129,10 @@ export class Player {
 
 	}
 
+	setCollidables(values: Bounds[]): void {
+		this.collidables = values
+	}
+
 	// Time it takes for the player to tilt other direction in ms
 	private walkTiltTime = 100;
 	// Boolean stating whether player is tilting right or left
@@ -138,26 +144,47 @@ export class Player {
 		this.broomLogic(ticker);
 	}
 
-	
+
 
 	private movement(ticker: Ticker) {
-		const {deltaMS} = ticker;
+		const { deltaMS } = ticker;
 
 		// ------------- movement ------------------
-		
-		const w = Player.keyManager.isKeyPressed('w');		
+
+		const w = Player.keyManager.isKeyPressed('w');
 		const a = Player.keyManager.isKeyPressed('a');
-		const s = Player.keyManager.isKeyPressed('s');		
-		const d = Player.keyManager.isKeyPressed('d');		
-	
+		const s = Player.keyManager.isKeyPressed('s');
+		const d = Player.keyManager.isKeyPressed('d');
+
 		// The "+" syntax converts a boolean to number
 		const dx = (+d - +a);
 		const dy = (+s - +w);
 		let dDist = Math.sqrt(dx ** 2 + dy ** 2);
 		if (dDist == 0) dDist = 1;
 
+
+
+		const movingLeft = (dx * this.SPEED * deltaMS / dDist) < 0 ? true : false;
+		const movingRight = (dx * this.SPEED * deltaMS / dDist) > 0 ? true : false;
+
+		const movingUp = (dy * this.SPEED * deltaMS / dDist) < 0 ? true : false;
+		const movingDown = (dy * this.SPEED * deltaMS / dDist) > 0 ? true : false;
+
+
 		this.x += dx * this.SPEED * deltaMS / dDist;
 		this.y += dy * this.SPEED * deltaMS / dDist;
+
+		for(let bound of this.collidables) {
+			if(colliding(this.container.getBounds(), bound)) {
+				if(movingRight || movingLeft) {
+					this.x -= dx * this.SPEED * deltaMS / dDist;
+				}
+				if(movingUp || movingDown) {
+					this.y -= dy * this.SPEED * deltaMS / dDist;
+				}
+			}
+		}
+
 
 		// ------------- player left-right ------------
 
@@ -171,14 +198,14 @@ export class Player {
 		}
 
 		// ------------- player tilt ------------------
-		
+
 		const isMoving = (dx !== 0 || dy !== 0);
-		
+
 		if (isMoving)
 			this.walkTiltTimer -= deltaMS;
 
-		if(this.walkTiltTimer<=0) {
-			this.walkTiltTimer = this.walkTiltTime;	
+		if (this.walkTiltTimer <= 0) {
+			this.walkTiltTimer = this.walkTiltTime;
 			this.tiltingRight = !this.tiltingRight;
 			this.footstepSound.rate(1 - Math.random() * 0.25);
 			this.footstepSound.play();
@@ -186,7 +213,7 @@ export class Player {
 
 		this.rotation = (isMoving) ?
 			(this.tiltingRight)
-				? 0.1 
+				? 0.1
 				: -0.1
 			: 0;
 	}
@@ -198,13 +225,13 @@ export class Player {
 	private broomTimer = this.broomHitDelay;
 
 	private broomLogic(ticker: Ticker) {
-		switch(this.broomState) {
+		switch (this.broomState) {
 			case 'Holding':
 				if (Player.keyManager.isKeyPressed('mouse0')) {
-					this.broomState = 'Prehit';	
+					this.broomState = 'Prehit';
 					this.broomReadySound.play();
 				}
-				if(Player.keyManager.isKeyPressed('mouse2')) {
+				if (Player.keyManager.isKeyPressed('mouse2')) {
 					this.broomState = 'Sweeping';
 					this.broomSweepSound.play();
 					this.sweepTrash();
@@ -212,7 +239,7 @@ export class Player {
 				this.broom.anchor.set(0.5, 0.5);
 				this.broom.position.set(0, 5);
 				this.broom.rotation = 1;
-			break;
+				break;
 			case 'Prehit':
 				if (!Player.keyManager.isKeyPressed('mouse0')) {
 					this.broomState = 'Hitting';
@@ -223,7 +250,7 @@ export class Player {
 				this.broom.anchor.set(0.5, 0.5);
 				this.broom.position.set(-4, 0);
 				this.broom.rotation = Math.PI / 2 + 0.2;
-			break;
+				break;
 			case 'Hitting':
 				if (this.broomTimer === this.broomHitDelay) {
 					this.broomHitSound.rate(1 + Math.random() * 0.2);
@@ -233,29 +260,29 @@ export class Player {
 				if (this.broomTimer <= 0) {
 					this.broomState = 'Holding';
 				}
-				this.broomTimer -= ticker.deltaMS; 
+				this.broomTimer -= ticker.deltaMS;
 
 				this.broom.anchor.set(0.5, 0.2);
 				this.broom.position.set(8, 0);
 				this.broom.rotation = -Math.PI / 2;
-			break;
+				break;
 			case 'Sweeping':
 				if (this.broomSweepTimer <= 0) {
 					this.broomState = 'Holding';
 					this.broomSweepTimer = this.broomSweepDelay;
 				}
-				this.broomSweepTimer -= ticker.deltaMS; 
+				this.broomSweepTimer -= ticker.deltaMS;
 				const sweepFactor = (this.broomSweepTimer / this.broomSweepDelay) * 2 - 1;
 
 				this.broom.anchor.set(0.5, 0.2);
 				this.broom.position.set(0, 0);
 				this.broom.rotation = Math.PI * sweepFactor / 4;
-			break;
+				break;
 		}
 	}
 
 	private sweepTrash() {
-		for(const trash of Trash.instances) {
+		for (const trash of Trash.instances) {
 			if (colliding(trash.sprite.getBounds(), this.container.getBounds())) {
 				trash.sweep(this.facingRight);
 			}
@@ -263,10 +290,10 @@ export class Player {
 	}
 
 	private attackWizards() {
-		for(const wizard of WizardSpawner.wizardList) {
-			if(!wizard.sprite) {
-                continue;
-            }
+		for (const wizard of WizardSpawner.wizardList) {
+			if (!wizard.sprite) {
+				continue;
+			}
 			if (colliding(wizard.sprite.getBounds(), this.container.getBounds())) {
 				wizard.die(true);
 			}

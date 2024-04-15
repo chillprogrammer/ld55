@@ -11,7 +11,7 @@ export class WizardSpawner {
     private spriteScale = 1;
     private player: Player = null;
     private spawnPosition: Point;
-    private spawnInterval: number = 200;
+    private spawnInterval: number = 2000;
     private spawnCounter: number = 0;
 
     public fountain: FountainDrink;

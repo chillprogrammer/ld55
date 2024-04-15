@@ -3,7 +3,7 @@ import { MapManager } from "./managers/map-manager";
 import { Ticker } from 'pixi.js';
 import { KeyManager } from './managers/key-manager';
 import titlescreen from './titlescreen';
-import createMap from './map';
+import createMap, { collidables } from './map';
 import { Player } from './player';
 import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
@@ -67,7 +67,6 @@ export class Game {
 
         createMap(this);
 
-
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.
         // By default this is true only for the Ticker.shared instance.
@@ -79,6 +78,7 @@ export class Game {
         this.destoryableObjects = new DestoryableObjects();
 
         this.player = new Player();
+        this.player.setCollidables(collidables);
         this.player.container.zIndex = 1;
 
         this.wizardSpawner = new WizardSpawner();
