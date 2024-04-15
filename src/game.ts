@@ -38,6 +38,11 @@ export class Game {
     public wizardSpawner: WizardSpawner = null;
     public destoryableObjects: DestoryableObjects = null;
 
+    private music = new Howl({
+		volume: 0.3,
+		src: ['assets/sounds/Wizards12.wav']
+	});
+
     constructor() {
         this.init();
     }
@@ -47,6 +52,8 @@ export class Game {
      */
     private async init() {
         await this.initializePixiJs();
+
+        this.music.play();
 
         this.mainContainer = new Container();
 		this.mainContainer.zIndex = 0;
