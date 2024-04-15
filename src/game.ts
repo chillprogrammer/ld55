@@ -8,7 +8,7 @@ import { Player } from './player';
 import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
 import { ZIndexManager } from './managers/zIndex-manager';
-import { Trash } from './trash';
+import { Trash, WizardDust } from './trash';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -91,6 +91,7 @@ export class Game {
     private update(ticker: Ticker) {
         const deltaTime = ticker.deltaTime;
 		Trash.updateAll(ticker);	
+		WizardDust.updateAll(ticker);	
 		ZIndexManager.arrangeZIndicies();
 //		this.mainContainer.sortChildren()
 //		this.mainContainer.sortDirty = true;
@@ -183,6 +184,10 @@ export class Game {
 							alias: 'trash2.png',
 							src: 'assets/sprites/trash2.png',
 						},
+						{
+							alias: 'wizardDust.png',
+							src: 'assets/sprites/wizardDust.png',
+						},
                     ]
                 },
                 {
@@ -237,6 +242,7 @@ export class Game {
         WizardSpawner.setGame(this);
         DestoryableObjects.setGame(this);
 		Trash.setGame(this);
+		WizardDust.setGame(this);
     }
 
 

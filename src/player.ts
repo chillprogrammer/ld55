@@ -5,6 +5,7 @@ import {Game} from './game';
 import {Howl} from 'howler'
 import {Trash} from './trash';
 import {colliding} from './utils';
+import {WizardSpawner} from './wizard';
 
 /** The main player class for the game */
 export class Player {
@@ -202,7 +203,6 @@ export class Player {
 				if (Player.keyManager.isKeyPressed('mouse0')) {
 					this.broomState = 'Prehit';	
 					this.broomReadySound.play();
-					Trash.throwFrom(this.x, this.y, 100, 100);
 				}
 				if(Player.keyManager.isKeyPressed('mouse2')) {
 					this.broomState = 'Sweeping';
@@ -217,6 +217,7 @@ export class Player {
 				if (!Player.keyManager.isKeyPressed('mouse0')) {
 					this.broomState = 'Hitting';
 					this.broomTimer = this.broomHitDelay;
+					this.attackWizards();
 				}
 
 				this.broom.anchor.set(0.5, 0.5);
@@ -261,5 +262,12 @@ export class Player {
 		}
 	}
 
+	private attackWizards() {
+		for(const wizard of WizardSpawner.wizardList) {
+			if (colliding(wizard.sprite.getBounds(), this.container.getBounds())) {
+				wizard.die(true);
+			}
+		}
+	}
 }
 

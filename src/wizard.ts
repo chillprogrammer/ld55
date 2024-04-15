@@ -3,10 +3,11 @@ import { Game } from "./game";
 import { Player } from "./player";
 import { FountainDrink, TrashCan } from "./destroyable_objects";
 import { ZIndexManager } from './managers/zIndex-manager';
+import { Trash, WizardDust } from './trash';
 
 export class WizardSpawner {
 
-    private wizardList: Wizard[] = [];
+    public static wizardList: Wizard[] = [];
     private spriteScale = 1;
     private player: Player = null;
     private spawnPosition: Point;
@@ -37,18 +38,18 @@ export class WizardSpawner {
         }
 
 
-        for (let i = 0; i < this.wizardList.length; i++) {
-            const wizard = this.wizardList[i];
+        for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
+            const wizard = WizardSpawner.wizardList[i];
 
             if(!wizard.sprite) {
-                this.wizardList.splice(i, 1);
+                WizardSpawner.wizardList.splice(i, 1);
                 i--;
                 return;
             }
             
             if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
                 wizard.sprite.destroy();
-                this.wizardList.splice(i, 1);
+                WizardSpawner.wizardList.splice(i, 1);
                 i--;
             }
 
@@ -112,8 +113,8 @@ export class WizardSpawner {
         wizard.sprite.anchor.set(0.5, 0.5);
         WizardSpawner.mainContainer.addChild(wizard.sprite);
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
-        this.wizardList.push(wizard);
-        console.log(this.wizardList);
+        WizardSpawner.wizardList.push(wizard);
+        console.log(WizardSpawner.wizardList);
         return wizard;
     }
 
@@ -280,11 +281,20 @@ export class Wizard {
             return;
         }
 
-        this.canAttack = false;
+		Trash.throwFrom(this.sprite.x, this.sprite.y, 100);
+		
+		this.die();
+    }
 
+	die(fromPlayer: boolean = false): void {
+		if (fromPlayer) {
+			WizardDust.throwFrom(this.sprite.x, this.sprite.y, 100);
+		}
+
+		this.canAttack = false;
         this.sprite.destroy();
         this.sprite = null;
         this.isAlive = false;
-    }
+	}
 
 }
