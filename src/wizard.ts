@@ -107,6 +107,7 @@ export class WizardSpawner {
         WizardSpawner.mainContainer.addChild(wizard.sprite);
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
         this.wizardList.push(wizard);
+        console.log(this.wizardList);
         return wizard;
     }
 
@@ -141,8 +142,9 @@ export class Wizard {
     private deltaTime: number;
     private MIN_DISTANCE_TO_ATTACK: number = 15;
 
-    private attackCooldown: number = 5000;
+    private attackCooldown: number = 2000;
     private attackCooldownFactor: number = this.attackCooldown;
+    private canAttack: boolean = true;
 
     constructor(_targetObject: object) {
         this.targetObject = (<any>_targetObject);
@@ -166,23 +168,25 @@ export class Wizard {
             return;
         }
 
-        // Colliding
+        // Not Colliding
         if (!this.collidingWithTarget()) {
             this.move();
-            this.attackCooldownFactor = this.attackCooldown;
-
         }
 
-        // Not colliding
+        // Colliding
         else {
-            if (this.attackCooldownFactor > 0) {
-
-            }
+            this.attack();
         }
 
-        //
-        if (this.attackCooldownFactor <= 0) {
-            this.attackCooldownFactor = 0;
+        if (!this.canAttack) {
+            this.attackCooldownFactor -= deltaTime;
+
+            if (this.attackCooldownFactor <= 0) {
+                this.attackCooldownFactor = this.attackCooldown;
+                this.canAttack = true;
+            }
+        } else {
+            this.attackCooldownFactor = this.attackCooldown;
         }
 
         this.sprite.rotation = this.rotation;
@@ -248,7 +252,13 @@ export class Wizard {
     }
 
     attack(): void {
+        if (!this.canAttack) {
+            return;
+        }
 
+        this.canAttack = false;
+
+        console.log("attack!!!!");
     }
 
 }
