@@ -30,7 +30,7 @@ export class Trash {
 	}
 
 	public static throwFrom(x: number, y: number, count: number, vel: number = 200) {
-		const heightFromGround = 20;
+		const heightFromGround = 40;
 		const yDispersion = 20;
 		for(let i = 0; i < count; i++) {
 			const velocity = Math.random() * vel;
