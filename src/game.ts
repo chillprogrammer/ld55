@@ -26,6 +26,8 @@ export class Game {
 	}*/
 	public trashContainer: Container = null;
 
+    public shiftClockTimeRemaining: number = 30000; // 2 mins
+
     // Assets
     public spritesheetAssets: any;
     public tilesetAssets: any;
@@ -100,12 +102,14 @@ export class Game {
     }
 
     private update(ticker: Ticker) {
-        const deltaTime = ticker.deltaTime;
+        const deltaTime = ticker.deltaMS;
 		Trash.updateAll(ticker);	
 		WizardDust.updateAll(ticker);	
 		ZIndexManager.arrangeZIndicies();
 //		this.mainContainer.sortChildren()
 //		this.mainContainer.sortDirty = true;
+
+        this.shiftClockTimeRemaining -= deltaTime;
     }
 
 
