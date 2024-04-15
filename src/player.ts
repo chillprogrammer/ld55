@@ -174,15 +174,30 @@ export class Player {
 		this.x += dx * this.SPEED * deltaMS / dDist;
 		this.y += dy * this.SPEED * deltaMS / dDist;
 
-		for(let bound of this.collidables) {
-			if(colliding(this.container.getBounds(), bound)) {
-				if(movingRight || movingLeft) {
+		for (let bound of this.collidables) {
+			if (colliding(this.container.getBounds(), bound)) {
+				if (movingRight || movingLeft) {
 					this.x -= dx * this.SPEED * deltaMS / dDist;
 				}
-				if(movingUp || movingDown) {
+				if (movingUp || movingDown) {
 					this.y -= dy * this.SPEED * deltaMS / dDist;
 				}
 			}
+		}
+
+		// Bottom wall collision
+		if (this.y > Player.game.INITIAL_HEIGHT - this.sprite.height / 2) {
+			this.y = Player.game.INITIAL_HEIGHT - this.sprite.height / 2;
+		}
+
+		// Right wall collision
+		if (this.x > Player.game.INITIAL_WIDTH - this.sprite.width / 2) {
+			this.x = Player.game.INITIAL_WIDTH - this.sprite.width / 2;
+		}
+
+		// Left wall collision
+		if (this.x < 0 + this.sprite.width / 2) {
+			this.x = 0 + this.sprite.width / 2;
 		}
 
 
