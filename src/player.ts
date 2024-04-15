@@ -44,17 +44,18 @@ export class Player {
 	public broom: Sprite;
 
 	private broomSweepSound = new Howl({
-		volume: 0.4,
+		volume: 0.2,
 		src: ['assets/sounds/BroomSweep.wav']
 	});
 
 	private broomReadySound = new Howl({
-		volume: 0.4,
+		volume: 0.2,
 		src: ['assets/sounds/BroomReady.wav']
 	});
 
 	private broomHitSound = new Howl({
-		src: ['assets/sounds/Broomhit.wav']
+		src: ['assets/sounds/Broomhit.wav'],
+		volume: 0.2
 	});
 
 	private footstepSound = new Howl({

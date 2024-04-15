@@ -41,7 +41,7 @@ export class Game {
     public destoryableObjects: DestoryableObjects = null;
 
     private music = new Howl({
-		volume: 0.3,
+		volume: 0.25,
 		src: ['assets/sounds/Wizards12.wav'],
         loop: true
 	});

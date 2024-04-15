@@ -102,7 +102,6 @@ export class WizardSpawner {
         wizard.sprite.position.set(this.spawnPosition.x, this.spawnPosition.y);
 
         WizardSpawner.wizardList.push(wizard);
-        console.log(WizardSpawner.wizardList);
         return wizard;
     }
 

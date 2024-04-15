@@ -9,9 +9,9 @@ export class Trash {
 	private static trashTextures: Texture[] = [];
 
 	public static instances: Trash[] = [];
+	public static totalGenerated: number = 0;
 
 	public static updateAll(ticker: Ticker){
-		console.log(Trash.instances.length);
 		for(const trash of Trash.instances) {
 			trash.update(ticker);
 		}
@@ -110,6 +110,7 @@ export class Trash {
 
 		Trash.game.mainContainer.addChild(this.sprite);
 		Trash.instances.push(this);
+		Trash.totalGenerated++;
 	}
 
 	private flying: boolean = true;
