@@ -10,7 +10,7 @@ export class WizardSpawner {
     private spriteScale = 1;
     private player: Player = null;
     private spawnPosition: Point;
-    private spawnInterval: number = 10000;
+    private spawnInterval: number = 2000;
     private spawnCounter: number = 0;
 
     public fountain: FountainDrink;
@@ -40,13 +40,19 @@ export class WizardSpawner {
         for (let i = 0; i < this.wizardList.length; i++) {
             const wizard = this.wizardList[i];
 
-            wizard.update(deltaTime);
-
+            if(!wizard.sprite) {
+                this.wizardList.splice(i, 1);
+                i--;
+                return;
+            }
+            
             if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
                 wizard.sprite.destroy();
                 this.wizardList.splice(i, 1);
                 i--;
             }
+
+            wizard.update(deltaTime);
         }
 
     }
@@ -133,6 +139,7 @@ export class WizardSpawner {
 }
 
 export class Wizard {
+    public isAlive: boolean = true;
     public sprite: Sprite;
     public targetObject: FountainDrink | TrashCan | any;
     private rotation: number = 0;
@@ -161,6 +168,11 @@ export class Wizard {
     }
 
     update(deltaTime: number) {
+
+        if(!this.isAlive) {
+            return;
+        }
+
         this.deltaTime = deltaTime;
 
         // If sprite doesn't exist, then dont update anything
@@ -189,6 +201,9 @@ export class Wizard {
             this.attackCooldownFactor = this.attackCooldown;
         }
 
+        if(!this.isAlive) {
+            return;
+        }
         this.sprite.rotation = this.rotation;
     }
 
@@ -211,7 +226,9 @@ export class Wizard {
 
 
     private makeWizardSpin() {
-
+        if(!this.isAlive) {
+            return;
+        }
 
         if (this.rotation > this.MAX_ROTATION_AMOUNT) {
             this.rotation = this.MAX_ROTATION_AMOUNT;
@@ -226,6 +243,10 @@ export class Wizard {
     }
 
     private moveTowardTarget(): void {
+        if(!this.isAlive) {
+            return;
+        }
+
         const spriteBounds = this.sprite.getBounds();
         const targetBounds = this.targetObject.sprite.getBounds();
 
@@ -247,6 +268,9 @@ export class Wizard {
     }
 
     move(): void {
+        if(!this.isAlive) {
+            return;
+        }
         this.makeWizardSpin();
         this.moveTowardTarget();
     }
@@ -258,7 +282,9 @@ export class Wizard {
 
         this.canAttack = false;
 
-        console.log("attack!!!!");
+        this.sprite.destroy();
+        this.sprite = null;
+        this.isAlive = false;
     }
 
 }
