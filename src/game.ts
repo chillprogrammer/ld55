@@ -26,7 +26,8 @@ export class Game {
     }*/
     public trashContainer: Container = null;
 
-    public shiftClockTimeRemaining: number = 200; // 2 mins
+    public shiftClockTimeRemaining: number = 12000; // 2 mins
+    public shiftClockTimeRemaining_DEFAULT: number = 120000; // 2 mins
 
     // Assets
     public spritesheetAssets: any;
@@ -98,14 +99,21 @@ export class Game {
 
 
     public restartGame() {
-        this.gameOver = false;
-        Ticker.shared.start();
+        Trash.removeAll();
+        WizardDust.removeAll();
 
-        this.wizardSpawner = new WizardSpawner();
+        this.shiftClockTimeRemaining = this.shiftClockTimeRemaining_DEFAULT;
+        this.player.setVisible(true);
+        this.wizardSpawner.start();
+
+        this.gameOver = false;
+        //Ticker.shared.start();
+
+        //this.wizardSpawner = new WizardSpawner();
         this.wizardSpawner.fountain = this.destoryableObjects.getFountain();
         this.wizardSpawner.trashCans = this.destoryableObjects.getTrashcans();
         this.wizardSpawner.setPlayer(this.player);
-        this.wizardSpawner.createWizard();
+        //this.wizardSpawner.createWizard();
     }
 
 

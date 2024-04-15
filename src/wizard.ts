@@ -44,6 +44,10 @@ export class WizardSpawner {
         this.cleanUp();
     }
 
+    start() {
+        this.gameOver = false;
+    }
+
     public destroy() {
         Ticker.shared.remove(this.update, this);
         for (let i = 0; i < WizardSpawner.wizardList.length; i++) {

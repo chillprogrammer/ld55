@@ -1,6 +1,6 @@
-import {Ticker, Texture, Sprite, TickerCallback} from 'pixi.js'
-import {Game} from './game';
-import {ZIndexManager} from './managers/zIndex-manager';
+import { Ticker, Texture, Sprite, TickerCallback } from 'pixi.js'
+import { Game } from './game';
+import { ZIndexManager } from './managers/zIndex-manager';
 
 export class Trash {
 
@@ -11,20 +11,23 @@ export class Trash {
 	public static instances: Trash[] = [];
 	public static totalGenerated: number = 0;
 
-	public static updateAll(ticker: Ticker){
-		for(const trash of Trash.instances) {
-			trash.update(ticker);
+	public static updateAll(ticker: Ticker) {
+		for (let trash of Trash.instances) {
+			if (trash?.sprite) {
+				trash.update(ticker);
+			}
 		}
 	}
 
 	public static removeAll() {
 		for (let i = 0; i < Trash.instances.length; i++) {
-            const trash = Trash.instances[i];
-            if (trash && trash.sprite) {
-				trash.sprite.destroy();
-                Trash.game.mainContainer.removeChild(trash.sprite);
-            }
-        }
+			let trash = Trash.instances[i];
+			if (trash) {
+				trash.sprite?.destroy();
+				trash.sprite = null;
+			}
+			console.log(Trash.instances)
+		}
 		Trash.instances = [];
 	}
 
@@ -34,7 +37,7 @@ export class Trash {
 			game.spritesheetAssets['trash1.png'],
 			game.spritesheetAssets['trash2.png']
 		);
-	}	
+	}
 
 	public static getRandomTexture(): Texture {
 		if (!Trash.trashTextures.length) throw "Need to provide trash textures to create trash!";
@@ -44,9 +47,9 @@ export class Trash {
 	public static throwFrom(x: number, y: number, count: number, vel: number = 200) {
 		const heightFromGround = 40;
 		const yDispersion = 20;
-		for(let i = 0; i < count; i++) {
+		for (let i = 0; i < count; i++) {
 			const velocity = Math.random() * vel;
-			const angle = Math.PI * ((Math.random() / 2) - (1/4)) + Math.PI / 2;
+			const angle = Math.PI * ((Math.random() / 2) - (1 / 4)) + Math.PI / 2;
 			const yRand = Math.random() * yDispersion - heightFromGround + y;
 			const xV = Math.cos(angle) * velocity;
 			const yV = Math.sin(angle) * velocity;
@@ -58,24 +61,24 @@ export class Trash {
 	private static trashDropSounds: Howl[] = [
 		new Howl({
 			volume: 0.1,
-			src: ['assets/sounds/TrashDrop1.wav']	
+			src: ['assets/sounds/TrashDrop1.wav']
 		}),
 		new Howl({
 			volume: 0.1,
-			src: ['assets/sounds/TrashDrop2.wav']	
+			src: ['assets/sounds/TrashDrop2.wav']
 		}),
 		new Howl({
 			volume: 0.1,
-			src: ['assets/sounds/TrashDrop3.wav']	
+			src: ['assets/sounds/TrashDrop3.wav']
 		}),
 		new Howl({
 			volume: 0.1,
-			src: ['assets/sounds/TrashDrop4.wav']	
+			src: ['assets/sounds/TrashDrop4.wav']
 		}),
 		new Howl({
 			volume: 0.1,
-			src: ['assets/sounds/TrashDrop5.wav']	
-		}),	
+			src: ['assets/sounds/TrashDrop5.wav']
+		}),
 	];
 
 
@@ -103,14 +106,14 @@ export class Trash {
 	public callback: TickerCallback<void>;
 
 	constructor(x: number, y: number, h: number, xV: number, hV: number) {
-		if (!Trash.game) throw "Need to link game to trash class!";	
+		if (!Trash.game) throw "Need to link game to trash class!";
 
 		this.x = x;
 		this.y = y;
 		this.h = h;
 		this.xV = xV;
 		this.hV = hV;
-//		this.ticker = Ticker.shared.add(this.update.bind(this));
+		//		this.ticker = Ticker.shared.add(this.update.bind(this));
 		this.sprite = Sprite.from(Trash.getRandomTexture());
 
 		this.sprite.zIndex = 1;
@@ -146,13 +149,13 @@ export class Trash {
 		}
 
 		this.sprite.scale.set(this.health / this.startingHealth);
-		this.x += this.xV * ticker.deltaMS / 1000;	
-		this.h += this.hV * ticker.deltaMS / 1000;	
+		this.x += this.xV * ticker.deltaMS / 1000;
+		this.h += this.hV * ticker.deltaMS / 1000;
 
 		if (
 			this.x < 0 || this.x > Trash.game.INITIAL_WIDTH
-			) {
-		this.xV = -this.xV;
+		) {
+			this.xV = -this.xV;
 		}
 
 
@@ -172,7 +175,7 @@ export class Trash {
 	}
 
 	public sweep(isRight: boolean) {
-		this.h += 1;	
+		this.h += 1;
 		const vel = 1 + Math.random() * 200;
 
 		this.xV = (isRight) ? vel : -vel;
@@ -181,9 +184,10 @@ export class Trash {
 	}
 
 	public remove() {
-		this.sprite.destroy();
+		this.sprite?.destroy();
 		this.sprite = null;
-		for(let i = this.index + 1; i < Trash.instances.length; i++) {
+
+		for (let i = this.index + 1; i < Trash.instances.length; i++) {
 			Trash.instances[i].index--;
 		}
 		Trash.instances.splice(this.index, 1);
@@ -214,17 +218,17 @@ export class WizardDust {
 
 	public static removeAll() {
 		for (let i = 0; i < WizardDust.instances.length; i++) {
-            const dust = WizardDust.instances[i];
-            if (dust && dust.sprite) {
+			const dust = WizardDust.instances[i];
+			if (dust && dust.sprite) {
 				dust.sprite.destroy();
-                WizardDust.game.mainContainer.removeChild(dust.sprite);
-            }
-        }
+				WizardDust.game.mainContainer.removeChild(dust.sprite);
+			}
+		}
 		WizardDust.instances = [];
 	}
 
-	public static updateAll(ticker: Ticker){
-		for(const trash of WizardDust.instances) {
+	public static updateAll(ticker: Ticker) {
+		for (const trash of WizardDust.instances) {
 			trash.update(ticker);
 		}
 	}
@@ -234,7 +238,7 @@ export class WizardDust {
 		WizardDust.trashTextures.push(
 			game.spritesheetAssets['wizardDust.png'],
 		);
-	}	
+	}
 
 	public static getRandomTexture(): Texture {
 		if (!WizardDust.trashTextures.length) throw "Need to provide trash textures to create trash!";
@@ -244,9 +248,9 @@ export class WizardDust {
 	public static throwFrom(x: number, y: number, count: number, vel: number = 200) {
 		const heightFromGround = 20;
 		const yDispersion = 20;
-		for(let i = 0; i < count; i++) {
+		for (let i = 0; i < count; i++) {
 			const velocity = Math.random() * vel;
-			const angle = Math.PI * ((Math.random() / 2) - (1/4)) + Math.PI / 2;
+			const angle = Math.PI * ((Math.random() / 2) - (1 / 4)) + Math.PI / 2;
 			const yRand = Math.random() * yDispersion - heightFromGround + y;
 			const xV = Math.cos(angle) * velocity;
 			const yV = Math.sin(angle) * velocity;
@@ -272,14 +276,14 @@ export class WizardDust {
 	public callback: TickerCallback<void>;
 
 	constructor(x: number, y: number, h: number, xV: number, hV: number) {
-		if (!WizardDust.game) throw "Need to link game to trash class!";	
+		if (!WizardDust.game) throw "Need to link game to trash class!";
 
 		this.x = x;
 		this.y = y;
 		this.h = h;
 		this.xV = xV;
 		this.hV = hV;
-//		this.ticker = Ticker.shared.add(this.update.bind(this));
+		//		this.ticker = Ticker.shared.add(this.update.bind(this));
 		this.sprite = Sprite.from(WizardDust.getRandomTexture());
 
 		this.sprite.zIndex = 1;
@@ -303,16 +307,16 @@ export class WizardDust {
 		}
 
 		this.health -= ticker.deltaMS;
-//		this.sprite.alpha = this.health / this.initialHealth;
+		//		this.sprite.alpha = this.health / this.initialHealth;
 		this.sprite.scale.set(this.health / this.initialHealth);
 
 		this.xV += (Math.random() - 0.5) * ticker.deltaMS;
-		this.hV += (Math.random() - 0.5)* ticker.deltaMS;
+		this.hV += (Math.random() - 0.5) * ticker.deltaMS;
 
-		this.x += this.xV * ticker.deltaMS / 1000;	
-		this.h += this.hV * ticker.deltaMS / 1000;	
+		this.x += this.xV * ticker.deltaMS / 1000;
+		this.h += this.hV * ticker.deltaMS / 1000;
 
-		
+
 
 		this.sprite.position.set(
 			this.x, this.y - this.h
@@ -322,7 +326,7 @@ export class WizardDust {
 	}
 
 	public sweep(isRight: boolean) {
-		this.h += 1;	
+		this.h += 1;
 		const vel = 1 + Math.random() * 200;
 
 		this.xV = (isRight) ? vel : -vel;
@@ -332,7 +336,7 @@ export class WizardDust {
 	public remove() {
 		this.sprite.destroy();
 		this.sprite = null;
-		for(let i = this.index + 1; i < WizardDust.instances.length; i++) {
+		for (let i = this.index + 1; i < WizardDust.instances.length; i++) {
 			WizardDust.instances[i].index--;
 		}
 		new Howl({
