@@ -188,6 +188,10 @@ export class Game {
 							alias: 'wizardDust.png',
 							src: 'assets/sprites/wizardDust.png',
 						},
+						{
+							alias: 'table.png',
+							src: 'assets/sprites/table.png',
+						},
                     ]
                 },
                 {
@@ -282,6 +286,8 @@ export class Game {
     }
 
 
+	private hasResized = false;
+
     /**
     * Callback function that runs when the window is resized.
     * Resizes the pixi.js canvas to maintain aspect ratio.
@@ -306,9 +312,15 @@ export class Game {
             calculatedHeight = Math.ceil(calculatedHeight);
 
             //This sets the game's dimensions to what we calculated.
-            this.app.renderer.resize(calculatedWidth, calculatedHeight);
-            const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
-            this.app.stage.scale.set(ratio);
+			if (!this.hasResized) {
+				this.app.renderer.resize(calculatedWidth, calculatedHeight);
+				const ratio = Math.min(width / this.INITIAL_WIDTH, height / this.INITIAL_HEIGHT);
+				this.app.stage.scale.set(ratio);
+			}
+
+			this.app.canvas.style.width = `${calculatedWidth}px`;
+			this.app.canvas.style.height = `${calculatedHeight}px`;
+			this.hasResized = true;
         }
     }
 }

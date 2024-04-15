@@ -241,7 +241,7 @@ export class Player {
 	private broomState: 'Holding' | 'Prehit' | 'Hitting' | 'Sweeping' = 'Holding';
 	private broomSweepDelay = 300;
 	private broomSweepTimer = this.broomSweepDelay;
-	private broomHitDelay = 200;
+	private broomHitDelay = 300;
 	private broomTimer = this.broomHitDelay;
 
 	private broomLogic(ticker: Ticker) {

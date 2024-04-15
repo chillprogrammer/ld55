@@ -42,6 +42,37 @@ export class Trash {
 		}
 	}
 
+
+	private static trashDropSounds: Howl[] = [
+		new Howl({
+			volume: 0.1,
+			src: ['assets/sounds/TrashDrop1.wav']	
+		}),
+		new Howl({
+			volume: 0.1,
+			src: ['assets/sounds/TrashDrop2.wav']	
+		}),
+		new Howl({
+			volume: 0.1,
+			src: ['assets/sounds/TrashDrop3.wav']	
+		}),
+		new Howl({
+			volume: 0.1,
+			src: ['assets/sounds/TrashDrop4.wav']	
+		}),
+		new Howl({
+			volume: 0.1,
+			src: ['assets/sounds/TrashDrop5.wav']	
+		}),	
+	];
+
+
+	private static playRandomDropSound() {
+		const sound = Trash.trashDropSounds[Math.floor(Trash.trashDropSounds.length * Math.random())];
+		sound.rate(1 + (Math.random() - 0.5));
+		sound.play();
+	}
+
 	private x: number;
 	private y: number;
 	private h: number; // fake height off of ground
@@ -80,11 +111,18 @@ export class Trash {
 		Trash.instances.push(this);
 	}
 
+	private flying: boolean = true;
+
 	public update(ticker: Ticker) {
 
 		if (this.h > 0) {
 			this.hV -= this.gravity * ticker.deltaMS / 1000;
+			this.flying = true;
 		} else {
+			if (this.flying === true) {
+				Trash.playRandomDropSound();
+			}
+			this.flying = false;
 			this.hV = 0;
 			this.xV = 0;
 		}
@@ -268,6 +306,12 @@ export class WizardDust {
 		for(let i = this.index + 1; i < WizardDust.instances.length; i++) {
 			WizardDust.instances[i].index--;
 		}
+		new Howl({
+			volume: 0.05 * Math.random(),
+			src: 'assets/sounds/WizardDust.wav',
+			rate: 1 - (Math.random() - 0.5) * 0.8
+		}).play();
+
 		WizardDust.instances.splice(this.index, 1);
 	}
 

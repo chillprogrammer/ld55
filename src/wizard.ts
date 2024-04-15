@@ -4,6 +4,7 @@ import { Player } from "./player";
 import { FountainDrink, TrashCan } from "./destroyable_objects";
 import { ZIndexManager } from './managers/zIndex-manager';
 import { Trash, WizardDust } from './trash';
+import {Howl} from 'howler';
 
 export class WizardSpawner {
 
@@ -13,6 +14,8 @@ export class WizardSpawner {
     private spawnPosition: Point;
     private spawnInterval: number = 2000;
     private spawnCounter: number = 0;
+
+
 
     public fountain: FountainDrink;
     public trashCans: TrashCan[];
@@ -89,23 +92,6 @@ export class WizardSpawner {
 
         let wizard = new Wizard(targetSprite);
 
-        // Color
-        const randomNum2 = Math.floor(Math.random() * 3);
-        switch (randomNum2) {
-            case 0:
-                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
-                break;
-            case 1:
-                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard_r.png']);
-                break;
-            case 2:
-                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard_g.png']);
-                break;
-            default:
-                wizard.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
-                break;
-        }
-
         this.spawnPosition = new Point(Math.floor(Math.random() * WizardSpawner.game.INITIAL_WIDTH), WizardSpawner.game.INITIAL_HEIGHT);
 
 
@@ -158,8 +144,70 @@ export class Wizard {
     private attackCooldownFactor: number = this.attackCooldown;
     private canAttack: boolean = true;
 
+	private static wizardGreetNoises: Howl[] = [
+		new Howl({
+			volume: 0.5,
+			src: ['assets/sounds/Greeting1.wav']	
+		}),
+		new Howl({
+			volume: 0.5,
+			src: ['assets/sounds/Greeting2.wav']	
+		}),
+		new Howl({
+			volume: 0.5,
+			src: ['assets/sounds/Greeting3.wav']	
+		}),
+	];
+
+
+	private static playRandomGreet() {
+		Wizard.wizardGreetNoises[Math.floor(Wizard.wizardGreetNoises.length * Math.random())].play();
+	}
+
+	private static wizardDeathNoises: Howl[] = [
+		new Howl({
+			volume: 0.25,
+			src: ['assets/sounds/Death1.wav']	
+		}),
+		new Howl({
+			volume: 0.25,
+			src: ['assets/sounds/Death2.wav']	
+		}),
+		new Howl({
+			volume: 0.25,
+			src: ['assets/sounds/Death3.wav']	
+		}),
+	];
+
+	private static playRandomDeath() {
+		Wizard.wizardDeathNoises[Math.floor(Wizard.wizardDeathNoises.length * Math.random())].play();
+	}
+
     constructor(_targetObject: object) {
         this.targetObject = (<any>_targetObject);
+
+        // Color
+        const randomNum2 = Math.floor(Math.random() * 3);
+        switch (randomNum2) {
+            case 0:
+                this.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
+                break;
+            case 1:
+                this.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard_r.png']);
+                break;
+            case 2:
+                this.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard_g.png']);
+                break;
+            default:
+                this.sprite = Sprite.from(WizardSpawner.spritesheetAssets['wizard.png']);
+                break;
+        }
+
+
+		const diceRoll = Math.floor(Math.random() * 4);
+		if (diceRoll == 1) {
+			Wizard.playRandomGreet();
+		}
     }
 
     collidingWithTarget(): boolean {
@@ -185,15 +233,6 @@ export class Wizard {
             return;
         }
 		this.move(deltaTime);
-
-        // Not Colliding
-        //if (!this.collidingWithTarget()) {
-        //}
-
-        // Colliding
-        //else {
-            //this.attack();
-        //}
 
         if (!this.canAttack) {
             this.attackCooldownFactor -= deltaTime;
@@ -261,10 +300,10 @@ export class Wizard {
 			this.summonParticleTimer = this.summonParticleDelay;
 		}
 
-		if (this.summonTimer <= 0) this.attack(); 
+		if (this.summonTimer <= 0) this.attack(deltaTime); 
     }
 
-	private state: 'TowardsTarget' | 'Summoning' = 'TowardsTarget';
+	private state: 'TowardsTarget' | 'Summoning' | 'DramaticDeath' = 'TowardsTarget';
 
     move(deltaTime: number): void {
         if (!this.isAlive) {
@@ -277,6 +316,9 @@ export class Wizard {
 			break;
 			case 'Summoning':
 				this.makeWizardSummon(deltaTime);
+			break;
+			case 'DramaticDeath':
+				this.dramaticDeath(deltaTime);
 			break;
 		}
     }
@@ -310,37 +352,78 @@ export class Wizard {
 		const dist = Math.sqrt(dx ** 2 + dy ** 2);
 		if (dist < this.MIN_DISTANCE_TO_ATTACK) {
 			this.state = 'Summoning';
-			console.log("Summoning!");
+			const sound = new Howl({
+				volume: 0.3,
+				src: 'assets/sounds/PaperSummon.wav'
+			});
+			sound.play();
 		}
     }
 
 
 
-    attack(): void {
+    attack(deltaTime: number): void {
         if (!this.canAttack) {
             return;
         }
 
 		this.canAttack = false;
         Trash.throwFrom(this.sprite.x, this.sprite.y, 50, 100);
+		const sound = new Howl({
+			volume: 0.4,
+			src: 'assets/sounds/PaperSpawn.wav',
+		});
+		sound.rate(1 - (Math.random() - 0.5) * 0.3);
+		sound.play();
 
-
-		setTimeout(()=>{this.die()}, 1000)
+		setTimeout(()=>{this.die(false)}, 1000)
     }
 
 	private alreadyDied = false;
 
 	die(fromPlayer: boolean = false): void {
 		if (this.alreadyDied) return;
-		//if (fromPlayer) {
+
+		if (fromPlayer) {
+
+			const diceRoll = Math.floor(Math.random() * 4);
+			if (diceRoll == 1) {
+				Wizard.playRandomDeath();
+				this.state = 'DramaticDeath';
+
+				WizardDust.throwFrom(this.sprite.x, this.sprite.y, 20, 300);
+				new Howl({
+					src: "assets/sounds/Summoning.wav",
+					volume: 0.1
+				}).play();
+				return;
+			}
+
+		}
+		new Howl({
+			src: "assets/sounds/Summoning.wav",
+			volume: 0.1
+		}).play();
+
 		WizardDust.throwFrom(this.sprite.x, this.sprite.y, 50);
 		this.alreadyDied = true;
-		//}
 
         this.canAttack = false;
         this.sprite.destroy();
         this.sprite = null;
         this.isAlive = false;
     }
+
+	private spinInitial = 2000;
+	private spin = this.spinInitial;
+	dramaticDeath(deltaTime: number) {
+		this.spin -= deltaTime;
+		this.sprite.scale.set(1, (this.spin / this.spinInitial));
+		this.sprite.rotation = 0;
+		this.sprite.scale = (this.spin / this.spinInitial);
+		this.sprite.blendMode = 'overlay';
+
+		if (this.spin <= 0) this.die();
+	}
 
 }
