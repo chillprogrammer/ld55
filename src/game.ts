@@ -9,6 +9,7 @@ import { WizardSpawner } from "./wizard";
 import { DestoryableObjects } from "./destroyable_objects";
 import { ZIndexManager } from './managers/zIndex-manager';
 import { Trash, WizardDust } from './trash';
+import { GameUI } from './ui';
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
 
@@ -19,6 +20,7 @@ export class Game {
     private backgroundColor: number = 0x000000;
     public app: Application;
     public mainContainer: Container = null;
+	private gameUI: GameUI;
 	/*public get mainContainer() {
 		this.app.stage
 	}*/
@@ -66,6 +68,7 @@ export class Game {
         await titlescreen(this);
 
         createMap(this);
+		this.gameUI = new GameUI(this);
 
         const ticker = Ticker.shared;
         // Set this to prevent starting this ticker when listeners are added.

@@ -386,7 +386,7 @@ export class Wizard {
 
 		if (fromPlayer) {
 
-			const diceRoll = Math.floor(Math.random() * 4);
+			const diceRoll = Math.floor(Math.random() * 3);
 			if (diceRoll == 1) {
 				Wizard.playRandomDeath();
 				this.state = 'DramaticDeath';

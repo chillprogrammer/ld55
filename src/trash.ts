@@ -11,6 +11,7 @@ export class Trash {
 	public static instances: Trash[] = [];
 
 	public static updateAll(ticker: Ticker){
+		console.log(Trash.instances.length);
 		for(const trash of Trash.instances) {
 			trash.update(ticker);
 		}
@@ -112,8 +113,13 @@ export class Trash {
 	}
 
 	private flying: boolean = true;
+	private angVel: number = (Math.random() - 0.5) * 0.01;
 
 	public update(ticker: Ticker) {
+
+		if (this.flying) {
+			this.sprite.rotation += this.angVel * ticker.deltaMS;
+		}
 
 		if (this.h > 0) {
 			this.hV -= this.gravity * ticker.deltaMS / 1000;
