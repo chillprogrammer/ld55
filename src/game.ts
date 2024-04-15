@@ -40,7 +40,8 @@ export class Game {
 
     private music = new Howl({
 		volume: 0.3,
-		src: ['assets/sounds/Wizards12.wav']
+		src: ['assets/sounds/Wizards12.wav'],
+        loop: true
 	});
 
     constructor() {
