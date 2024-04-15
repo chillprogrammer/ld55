@@ -27,44 +27,67 @@ export class WizardSpawner {
         Ticker.shared.add(this.update, this);
     }
 
+
+    public cleanUp() {
+        for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
+            const wizard = WizardSpawner.wizardList[i];
+            if (wizard && wizard.sprite) {
+                wizard.isAlive = false;
+                wizard.sprite.destroy();
+                WizardSpawner.mainContainer.removeChild(wizard.sprite);
+            }
+        }
+        WizardSpawner.wizardList = [];
+    }
+
     public destroy() {
         Ticker.shared.remove(this.update, this);
         for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
             const wizard = WizardSpawner.wizardList[i];
-            if(wizard && wizard.sprite) {
+            if (wizard && wizard.sprite) {
+                wizard.isAlive = false;
+                wizard.sprite.destroy();
                 WizardSpawner.mainContainer.removeChild(wizard.sprite);
             }
         }
+        WizardSpawner.wizardList = [];
     }
 
     private update(ticker: Ticker) {
-        const deltaTime = ticker.deltaMS;
-        this.spawnCounter += deltaTime;
+        try {
 
 
-        if (this.spawnCounter > this.spawnInterval) {
-            this.spawnCounter = 0;
-
-            this.createWizard();
-        }
+            const deltaTime = ticker.deltaMS;
+            this.spawnCounter += deltaTime;
 
 
-        for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
-            const wizard = WizardSpawner.wizardList[i];
+            if (this.spawnCounter > this.spawnInterval) {
+                this.spawnCounter = 0;
 
-            if (!wizard.sprite || !wizard.sprite.position) {
-                WizardSpawner.wizardList.splice(i, 1);
-                i--;
-                return;
+                this.createWizard();
             }
 
-            if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
-                wizard.sprite.destroy();
-                WizardSpawner.wizardList.splice(i, 1);
-                i--;
+
+            for (let i = 0; i < WizardSpawner.wizardList.length; i++) {
+                const wizard = WizardSpawner.wizardList[i];
+
+                if (!wizard.sprite || !wizard.sprite.position) {
+                    WizardSpawner.wizardList.splice(i, 1);
+                    i--;
+                    return;
+                }
+
+                if (wizard.sprite.position.y < -25 || wizard.sprite.position.y > WizardSpawner.game.INITIAL_HEIGHT + 25 || wizard.sprite.x < -25 || wizard.sprite.x > WizardSpawner.game.INITIAL_WIDTH + 25) {
+                    wizard.sprite.destroy();
+                    WizardSpawner.wizardList.splice(i, 1);
+                    i--;
+                }
+
+                wizard.update(deltaTime);
             }
 
-            wizard.update(deltaTime);
+        } catch (e) {
+            console.error(e);
         }
 
     }
@@ -371,7 +394,7 @@ export class Wizard {
 
 
     attack(deltaTime: number): void {
-        if (!this.canAttack) {
+        if (!this.canAttack || !this.isAlive) {
             return;
         }
 
@@ -390,6 +413,7 @@ export class Wizard {
     private alreadyDied = false;
 
     die(fromPlayer: boolean = false): void {
+        this.isAlive = false;
         if (this.alreadyDied) return;
 
         if (fromPlayer) {

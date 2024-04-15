@@ -84,11 +84,26 @@ export class Game {
         //this.destoryableObjects.destroy();
         //this.destoryableObjects = null;
 
-        //this.player.destroy();
-        //this.player = null;
+        this.player.destroy();
+        this.player = null;
 
         this.wizardSpawner.destroy();
         this.wizardSpawner = null;
+
+        Trash.removeAll();
+        WizardDust.removeAll();
+    }
+
+
+    private restartGame() {
+        this.gameOver = false;
+        Ticker.shared.start();
+
+        this.wizardSpawner = new WizardSpawner();
+        this.wizardSpawner.fountain = this.destoryableObjects.getFountain();
+        this.wizardSpawner.trashCans = this.destoryableObjects.getTrashcans();
+        this.wizardSpawner.setPlayer(this.player);
+        this.wizardSpawner.createWizard();
     }
 
 
@@ -118,8 +133,7 @@ export class Game {
     }
 
     private update(ticker: Ticker) {
-        ZIndexManager.arrangeZIndicies();
-        
+       
         if(this.gameOver) {
             return;
         }
@@ -127,6 +141,7 @@ export class Game {
         const deltaTime = ticker.deltaMS;
         Trash.updateAll(ticker);
         WizardDust.updateAll(ticker);
+        ZIndexManager.arrangeZIndicies();
 
         //		this.mainContainer.sortChildren()
         //		this.mainContainer.sortDirty = true;

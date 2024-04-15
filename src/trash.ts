@@ -17,6 +17,17 @@ export class Trash {
 		}
 	}
 
+	public static removeAll() {
+		for (let i = 0; i < Trash.instances.length; i++) {
+            const trash = Trash.instances[i];
+            if (trash && trash.sprite) {
+				trash.sprite.destroy();
+                Trash.game.mainContainer.removeChild(trash.sprite);
+            }
+        }
+		Trash.instances = [];
+	}
+
 	public static setGame(game: Game) {
 		Trash.game = game;
 		Trash.trashTextures.push(
@@ -200,6 +211,17 @@ export class WizardDust {
 	private static trashTextures: Texture[] = [];
 
 	public static instances: WizardDust[] = [];
+
+	public static removeAll() {
+		for (let i = 0; i < WizardDust.instances.length; i++) {
+            const dust = WizardDust.instances[i];
+            if (dust && dust.sprite) {
+				dust.sprite.destroy();
+                WizardDust.game.mainContainer.removeChild(dust.sprite);
+            }
+        }
+		WizardDust.instances = [];
+	}
 
 	public static updateAll(ticker: Ticker){
 		for(const trash of WizardDust.instances) {
