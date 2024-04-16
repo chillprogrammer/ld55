@@ -193,6 +193,26 @@ export class Wizard {
             volume: 0.5,
             src: ['assets/sounds/Greeting3.wav']
         }),
+        new Howl({
+            volume: 0.5,
+            src: ['assets/sounds/Greeting4.wav']
+        }),
+        new Howl({
+            volume: 0.5,
+            src: ['assets/sounds/Greeting5.wav']
+        }),
+        new Howl({
+            volume: 0.5,
+            src: ['assets/sounds/Greeting6.wav']
+        }),
+        new Howl({
+            volume: 0.5,
+            src: ['assets/sounds/Greeting7.wav']
+        }),
+        new Howl({
+            volume: 0.5,
+            src: ['assets/sounds/Greeting8.wav']
+        }),
     ];
 
 

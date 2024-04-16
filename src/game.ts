@@ -260,6 +260,10 @@ export class Game {
                             alias: 'table.png',
                             src: 'assets/sprites/table.png',
                         },
+						{
+							alias: 'background-screen.png',
+							src: 'assets/sprites/background-screen.png'
+						}
                     ]
                 },
                 {

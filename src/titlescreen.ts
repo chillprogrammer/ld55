@@ -28,8 +28,6 @@ export default function titlescreen(game: Game): Promise<void> { return new Prom
 			wizardY - wizard.height / 2
 		);
 
-
-
 		const title = new Text({
 			text: `Shenanigans at Schmendy's`,
 			style: {
